@@ -1,0 +1,10 @@
+LinkedIn API info
+
+   * API Key:
+qo5ma74wqgnd
+   * Secret Key:
+ekNLht7ZKzzoiRNe
+   * OAuth User Token:
+aa782223-e741-4231-b4e6-efb38582ce0f
+   * OAuth User Secret:
+3b3b166c-3940-4ece-8f10-935d17cb7f0e 
