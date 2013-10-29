@@ -20,10 +20,11 @@ var Secret_Key;
 var OAuth_User_Token;
 var OAuth_User_Secret;
 var PROPERTIES_FILENAME = 'apikeys.properties';
+var ACCESS_TOKEN;
 
 function init() {
     readProperties(PROPERTIES_FILENAME)
-    main();
+//    main();
 }
 function loadProperties(filename)
 {
@@ -97,22 +98,94 @@ function readProperties(file)
 }
 function main()
 {
-
+    var credentials_json = loadCookie();
+    if(validateSignature(credentials_json))
+    {
+        ACCESS_TOKEN = credentials_json.access_token;
+    }
 }
 
-function onLinkedInAuth() {
-    // this must be the same domain as the application, where we write the cookie
-    console.log("Authenticated");
-    console.log(document.cookie);
-    $.post('http://people.ischool.berkeley.edu/~jannah/i290P3/');
-    // extract data from cookie stored in json
+function makeAPICall()
+{
+    // configuration settings
+//$consumer_key = 'YOUR_API_KEY';
+//$consumer_secret = 'YOUR_SECRET_KEY';
+var access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken';
+
+// init the client
+var oauth = new OAuth(API_KEY, Secret_Key);
+oauth.
+// swap 2.0 token for 1.0a token and secret
+var oauth.fetch(access_token_url, array('xoauth_oauth2_access_token' => $access_token), OAUTH_HTTP_METHOD_POST);
+// parse the query string received in the response
+parse_str($oauth->getLastResponse(), $response);
+
+// Debug information
+print "OAuth 1.O Access Token = " . $response['oauth_token'] . "\n";
+print "OAuth 1.O Access Token Secret = " . $response['oauth_token_secret'] . "\n";
+}
+
+function validateSignature(credentials_json)
+{
+    var creds = {};
+    creds = credentials_json;
+
+//    $consumer_secret = 'YOUR_SECRET_KEY';
+    console.log('validating');
+// validate signature
+    for (var key in credentials_json)
+    {
+        console.log(key + ':' + credentials_json[key]);
+    }
+//    console.log(credentials_json.signature_version);
+    console.log(credentials_json.signature_order.constructor);
+    if (credentials_json.signature_version === "1") {
+        if (credentials_json.signature_order && credentials_json.signature_order instanceof Array) {
+            var base_string = '';
+            // build base string from values ordered by signature_order
+            for (var i in credentials_json.signature_order)
+            {
+                var key = credentials_json.signature_order[i];
+                console.log(key + '\t' + credentials_json[key]);
+                base_string += credentials_json[key];
+            }
+            console.log(base_string);
+            // hex encode an HMAC-SHA1 string
+            var hash = CryptoJS.HmacSHA1(base_string, Secret_Key);
+            console.log(hash);
+            var signature = CryptoJS.enc.Base64.stringify(hash);
+
+            console.log(signature);
+//            var signature = base64_encode(hash_hmac('sha1', base_string, Secret_Key, true));
+            // check if our signature matches the cookie's
+            if (signature == credentials_json.signature) {
+                console.log("signature validation succeeded");
+                return true;
+            } else {
+                console.log("signature validation failed");
+
+            }
+        } else {
+            console.log("signature order missing");
+        }
+    } else {
+        console.log("unknown cookie version");
+    }
+    return false;
+}
+function loadCookie() {
+
+    console.log('loading cookie');
     var consumer_key = API_Key;
-    var cookie_name = "linkedin_oauth_"+ consumer_key;
-    console.log(consumer_key+"\t"+cookie_name);
+    var cookie_name = "linkedin_oauth_" + consumer_key;
+    console.log(consumer_key + "\t" + cookie_name);
     var credentials_json = getCookie(cookie_name); // where PHP stories cookies
 //    $credentials = json_decode($credentials_json);
 
     console.log(credentials_json);
+
+
+    return JSON.parse(credentials_json);
 }
 
 function getCookie(c_name)
@@ -137,5 +210,8 @@ function getCookie(c_name)
         }
         c_value = unescape(c_value.substring(c_start, c_end));
     }
+
     return c_value;
 }
+
+var sampleSignature = {"signature_version": "1", "signature_method": "HMAC-SHA1", "signature_order": ["access_token", "member_id"], "access_token": "j66-0VBBeH_6LDbfUKWOhWttU-n5oyvpr55D", "signature": "eBPZJqu+E2zFNJyfp6hus+thueA=", "member_id": "aUOotmfvmP"};
