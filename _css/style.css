@@ -8,3 +8,11 @@ and open the template in the editor.
     Author     : Hassan
 */
 
+#people-search{
+    float:right;
+    width:45%;
+}
+#connections{
+    float:left;
+    width:45%;
+}
