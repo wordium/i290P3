@@ -99,9 +99,10 @@ function readProperties(file)
 function main()
 {
     var credentials_json = loadCookie();
-    if(validateSignature(credentials_json))
+    if (validateSignature(credentials_json))
     {
         ACCESS_TOKEN = credentials_json.access_token;
+        makeAPICall();
     }
 }
 
@@ -110,21 +111,63 @@ function makeAPICall()
     // configuration settings
 //$consumer_key = 'YOUR_API_KEY';
 //$consumer_secret = 'YOUR_SECRET_KEY';
-var access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken';
+//    var access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken';
 
+    var requestURL = 'https://api.linkedin.com/v1/people/~?oauth2_access_token=' + ACCESS_TOKEN;
+    /*   
+     $.ajax({ //my ajax request
+     url: "_URL_I_AM_MAKING_REQUEST_TO_",
+     type: "GET",
+     cache: false,
+     dataType: "json",
+     crossDomain: true,
+     data: { _mydata_
+     success : function(response){}
+     });*/
+
+
+    $.ajax({
+        type: 'GET',
+        url: requestURL,
+        processData: true,
+        data: {},
+        dataType: "json",
+        success: function(data) {
+            processData(data);
+        }
+    });
+
+    $.get(requestURL).done(function(data) {
+        console.log(data);
+    });
+    /*
+     
+     var accessor = {consumerSecret: SECRET_KEY
+     , tokenSecret: ACCESS_TOKEN; }
+     var message = {action: POST
+     , method: form.method
+     , parameters: []
+     };
+     */
 // init the client
-var oauth = new OAuth(API_KEY, Secret_Key);
-oauth.
-// swap 2.0 token for 1.0a token and secret
-var oauth.fetch(access_token_url, array('xoauth_oauth2_access_token' => $access_token), OAUTH_HTTP_METHOD_POST);
-// parse the query string received in the response
-parse_str($oauth->getLastResponse(), $response);
-
-// Debug information
-print "OAuth 1.O Access Token = " . $response['oauth_token'] . "\n";
-print "OAuth 1.O Access Token Secret = " . $response['oauth_token_secret'] . "\n";
+    /*
+     var oauth = new OAuth(API_KEY, Secret_Key);
+     oauth.
+     // swap 2.0 token for 1.0a token and secret
+     var oauth.fetch(access_token_url, array('xoauth_oauth2_access_token' => $access_token), OAUTH_HTTP_METHOD_POST);
+     // parse the query string received in the response
+     parse_str($oauth->getLastResponse(), $response);
+     
+     // Debug information
+     print "OAuth 1.O Access Token = " . $response['oauth_token'] . "\n";
+     print "OAuth 1.O Access Token Secret = " . $response['oauth_token_secret'] . "\n";
+     
+     */
 }
-
+function processData(data) {
+    console.log('processing data');
+    console.log(data);
+}
 function validateSignature(credentials_json)
 {
     var creds = {};
@@ -214,4 +257,62 @@ function getCookie(c_name)
     return c_value;
 }
 
+
+function callLIAPI(parameters_input, api_input) {
+    var xhr = new easyXDM.Rpc({
+        remote: "http://api.linkedin.com/"
+    }, {
+        remote: {
+            request: {} // request is exposed by /cors/
+        }
+    });
+    xhr.request({
+        url: "v1/people/cors~?",
+        method: "POST",
+        data: {oauth2_access_token: ACCESS_TOKEN}
+    }, function(response) {
+        alert(response.status);
+//        alert(response.data);
+        console.log(response.data);
+    });
+    /*
+     var api_details = {
+     parameters: parameters_input,
+     api: api_input,
+     type: 'GET'
+     }
+     return $.ajax({
+     url: '_js/LI_proxy.php',
+     type: 'POST',
+     dataType: 'json',
+     data: api_details,
+     success: function(data, textStatus, xhr) {
+     console.log("LI Call Successful " + api_input);
+     },
+     error: function(xhr, textStatus, errorThrown) {
+     console.log("LI Call Failed " + api_input);
+     }
+     });*/
+}
+function onLinkedInAuth() {
+//   $.post('_js/LI_proxy.php');
+// location.href = "_js/LI_proxy.php";
+    /*
+     var credentials_json = loadCookie();
+     $.ajax({
+     url: '_js/LI_proxy.php',
+     type: 'POST',
+     //        dataType: 'json',
+     success: function(data, textStatus, xhr) {
+     console.log("validated");
+     console.log(data);
+     },
+     error: function(xhr, textStatus, errorThrown) {
+     console.log("error");
+     console.log(textStatus);
+     console.log(errorThrown);
+     }
+     });*/
+//    $.post('index.html');
+}
 var sampleSignature = {"signature_version": "1", "signature_method": "HMAC-SHA1", "signature_order": ["access_token", "member_id"], "access_token": "j66-0VBBeH_6LDbfUKWOhWttU-n5oyvpr55D", "signature": "eBPZJqu+E2zFNJyfp6hus+thueA=", "member_id": "aUOotmfvmP"};

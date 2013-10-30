@@ -12,15 +12,21 @@ and open the template in the editor.
         <link rel="stylesheet" type="text/css" href="_css/style.css" />
         <script type="text/javascript" src="_js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="_js/d3.min.js"></script>	
-        <script type="text/javascript" src="_js/LI_API.js"></script>
-        <script type="text/javascript" src="_js/oauth/oauth.js"></script>
-        <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha1.js"></script>
+        <script type="text/javascript" src="_js/LI_API2.js"></script>
+
+        <!--<script type="text/javascript" src="_js/oauth/oauth.js"></script>-->
+        <!-- <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha1.js"></script>
         <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
         <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/components/enc-base64-min.js"></script>
+        <script src="_js/easyXDM/easyXDM.debug.js"></script>
+        <script type="text/javascript">
+            easyXDM.DomHelper.requiresJSON("_js/easyXDM/json2.js");
+        </script>
+        -->
         <script type="text/javascript" src="https://platform.linkedin.com/in.js">
 
             api_key: 9ezmu5cjbccd
-                    onLoad:main
+                    onLoad:onLinkedInLoad
             authorize:true
             credentials_cookie: true
         </script>
@@ -28,12 +34,10 @@ and open the template in the editor.
 
     </head>
     <body>
-        <div>TODO write content</div>
-        <script type="in/Login">
-            Hello, <?js= firstName ?> <?js= lastName ?>
-                    
-        </script>
-
+     
+        <script type="IN/Login"></script>
+        <div id="profiles"></div>
+        <div id="connections" ></div>
         <!--<script type="in/login" data-onAuth="onLinkedInAuth"></script>-->
     </body>
 </html>
