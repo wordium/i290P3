@@ -49,6 +49,7 @@ function getConnections(users)
 function displayProfiles(profiles) {
     member = profiles.values[0];
     $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName + " " + member.lastName + "</p>");
+    $('#profiles').append("<p>" + member.headline + "</p>");
     $('#profiles').append("<img src='" + member.pictureUrl + "' alt='" + member.firstName + " " + member.lastName + "'/>")
     console.log(member);
 }
@@ -73,6 +74,7 @@ function displayConnections(connections) {
                 + member.firstName + " " + member.lastName + "'/>" + 
                 member.firstName + " " + member.lastName
                 + " works in the " + member.industry + " industry</p>");
+        /*$('#connections').append("<p>Headline: " + member.headline + "</p>");*/
     }
 }
 
