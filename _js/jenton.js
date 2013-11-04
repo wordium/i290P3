@@ -1,138 +1,113 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+$.getJSON("http://api.sqoot.com/v2/deals?api_key=dh6h5k")            // Sad panda    (404)
+$.getJSON("http://api.sqoot.com/v2/deals?api_key=dh6h5k&callback=pickles") // Awesomesauce (200)
 
 
-function onLinkedInLoad() {
-    IN.Event.on(IN, "auth", onLinkedInAuth);
-}
+$(document).ready(function() {
 
-function onLinkedInAuth()
-{
-    IN.API.Profile("me","url=http://www.linkedin.com/in/sandray")
-    .fields("id", "firstName", "lastName", "industry", "distance", "headline", "currentShare", "summary", "specialties", "positions", "pictureUrl").result(displayProfiles);
-    /*IN.API.Profile("me")
-    .fields("id", "firstName", "lastName", "industry", "distance", "headline", "currentShare", "summary", "specialties", "positions", "pictureUrl").result(displayProfiles);*/
-    /*getProfiles("me"); 
-    getConnections("me");*/
+    $('#test').submit(function(e) {
 
-
-}
-
-function displayProfiles(profiles) {
-    var members = profiles.values;
-    
-    for (var member in members) {
-        //initialize variables
-        firstName = members[member].firstName;
-        lastName = members[member].lastName;
-        picture = members[member].pictureUrl;
-        headline = members[member].headline;
-        industry = members[member].industry;
-        currentShare = members[member].currentShare;
-        summary = members[member].summary;
-        specialties = members[member].specialties;
-        distance = members[member].distance;
-
-        $('#profiles').append("<p>Welcome " + firstName + " " + lastName + "</p>");
-        $('#profiles').append("<img src='" + picture + "' alt='" + firstName + " " + lastName + "'/>")
-        $('#profiles').append("<p>Headline: " + headline + "</p>");
-        $('#profiles').append("<p>Industry: " + industry + "</p>");
-        $('#profiles').append("<p>Current Share: " + currentShare + "</p>");
-        $('#profiles').append("<p>Summary: " + summary + "</p>");
-        $('#profiles').append("<p>Specialties: " + specialties + "</p>");
-        $('#profiles').append("<p>Distance: " + distance + "</p>");
-        
-        /* Display positions */
-        var positionList = members[member].positions.values;
-        console.log(positionList);
-        for (var position in positionList) {
-            //initialize variables
-            companyName = positionList[position].company.name;
-            positionTitle = positionList[position].title;
-            positionStartDate = positionList[position].startDate.month + "/" + positionList[position].startDate.year; 
-
-            $('#profiles').append("<p>Positions: " + companyName + " - " + positionTitle + " Start Date: " + positionStartDate);
-            if (positionList[position].isCurrent === false) {
-                endDate = positionList[position].endDate.month + "/" + positionList[position].endDate.year;
-                $('#profiles').append(" End Date: " + endDate);
-            } else if (positionList[position].isCurrent === true) {
-                endDate = "Current";
-                $('#profiles').append(" End Date: " + endDate);
-            }
-            $('#profiles').append("</p>");
-             console.log(positionList[position].startDate.month);
-             console.log(positionList[position].title);    
+        var url = 'http://api.sqoot.com/v2/categories';
+        $.getJSON(url, function(data) {
+            console.log(data);
         }
+
+    });
+        //PART 1
+        //1. Write an event handler for the "loadBookmarks" form submit event. 
+        //2. In the event handler, create an AJAX request using JSONP to GET all bookmarks for the given user name
+        //   The format of the URL is http://feeds.delicious.com/v2/json/' + username + '?callback=?' 
+        //   See http://api.jquery.com/jQuery.getJSON/ for more information getJSON with JSONP
+        //3. In the AJAX callback function, add all of the bookmarks to the #bookmarks list. You may want to console.log the result first to
+        //   see what you're getting back frm the API. Then, use the helper function below
+        //   to generate a single list item for each bookmark object
+/*
+        $('#loadBookmarks').submit(function(e) {
+
+            var username = $('#sourceUser').val();
+            var url = 'http://feeds.delicious.com/v2/json/' + username + '?callback=?';
+
+            $.getJSON(url, function(data) {
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var li = generateBookmarkListItem(data[i]);
+                    $('#bookmarks').append(li);
+                }
+            });
+
+            return false;
+            
+        });
+
+        //PART 2
+        //1. Write another form event handler, this time for the "saveBookmarks" form. 
+        //2. In the event handler, create an AJAX request to POST each of the checked bookmarks to the second Delicious account
+        //    by way of the the proxy file you uploaded to your ISchool account.
+        //    You'll need to extract the url and tags back from each bookmark <li>
+        //    Review http://delicious.com/developers to figure out which API method to use and what parameters are required
+
+        //IMPORTANT NOTE: In order to test the request, you will need to Upload the contents of this lab (browser.html, js directory, 
+        //css directory) and run it from the web (ex. http://people.ischool.berkeley.edu/~yourname/browser.html) 
+
+        //PART 3 (Advanced/Extra)
+        //1. Edit the HTML of the form and modify your JavaScript code to allow the user to add new tags to the selected bookmarks
+        //
         
-        $('#profiles').append("<hr>");
-        /*console.log(members[member]);*/
-       
-    }
-}
 
-/*
-function displayProfilesErrors(error) {
-    profilesDiv = document.getElementById("profiles");
-    profilesDiv.innerHTML = "<p>Oops!</p>";
-    console.log(error);
-}
-*/
+        $('#saveBookmarks').submit(function() {
 
-/*
-function getProfiles(users)
-{
-    if (!(users instanceof Array))
-    {
-        var temp = users;
-        var users = [temp];
-    }
+            var listItems = $('li');
+            
+            var user = $('#targetUser').val();
+            var pass = $('#password').val();
 
-    for (var i = 0, j = users.length; i < j; i++)
-    {
-        IN.API.Profile(users[i]).result(displayProfiles)
-                .error(displayProfilesErrors);
+            listItems.each(function() {
 
-    }
-}
-function getConnections(users)
-{
-    if (!(users instanceof Array))
-    {
-        var temp = users;
-        var users = [temp];
-    }
+                if ($(this).find(':checked').length > 0) {
+                    
+                    var deliciousData = {
+                        username : user,
+                        password : pass,
+                        method : 'posts/add',
+                        url : $(this).find('a').attr('href'),
+                        tags : $(this).find('.tags').text()
+                    }
 
-    for (var i = 0, j = users.length; i < j; i++)
-    {
-        IN.API.Connections(users[i])
-                .fields("firstName", "lastName", "industry", "pictureUrl")
-                .result(displayConnections);
-    }
-}
-*/
 
-/*
-function findPeopleByIndustry(industry)
-{
+                    $.ajax({
+                        url: 'delicious_proxy.php',
+                        type: 'post',
+                        data: deliciousData,
+                        success: function(data) {
+                            if (data.result_code == "done") {
+                                alert("Bookmarks were successfully posted to delicious");
+                            }
+                        }, error: function(e){
+                            console.log(e);
+                        }
 
-}
+                    });
+                }
 
-function displayConnections(connections) {
-//  var connectionsDiv = document.getElementById("connections");
+            });
 
-    var members = connections.values; // The list of members you are connected to
-    for (var key in members) {
-        var member = members[key];
-        $('#connections').append("<p><img src='" + member.pictureUrl + "' alt='"
-                + member.firstName + " " + member.lastName + "'/>" + 
-                member.firstName + " " + member.lastName
-                + " works in the " + member.industry + " industry</p>");
-        $('#connections').append("<p>Headline: " + member.headline + "</p>");
-    }
-}
+            return false;
 
-function displayConnectionsErrors(error) {
-}*/
+
+        });
+
+        //PART 3 (If you have time)
+        //1. Edit the HTML of the form and modify your JavaScript code to allow the user to add new tags to the selected bookmarks
+        //
+
+
+        function generateBookmarkListItem(markObj) {
+            // markObj.u = url
+            // markObj.t = array of tags
+
+            var listItem = $('<li><div><input type="checkbox"> <a href="' + markObj.u + '">' + markObj.u + '</a></div><span class="tags">' + markObj.t + '</span></li>');
+            return listItem;
+
+        }
+
+    */
+});
