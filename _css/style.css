@@ -8,3 +8,17 @@ and open the template in the editor.
     Author     : Hassan
 */
 
+#container {
+	width:800px;
+}
+#map-canvas {
+	float:left;
+	position:relative;
+	width:100%;
+	height:400px;
+}
+
+#profiles {
+	width:100%;
+	padding-top:200px;
+}
