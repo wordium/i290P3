@@ -16,3 +16,8 @@ and open the template in the editor.
     float:left;
     width:45%;
 }
+
+.timeLine {
+  stroke: black; 
+  stroke-width: 2px;
+}
