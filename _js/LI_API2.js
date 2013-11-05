@@ -17,13 +17,14 @@ function onLinkedInLoad() {
 
 function onLinkedInAuth()
 {
-    getProfiles("me");
+    var profiles = getProfiles("me");
 //    getConnections("me");
 
 
 }
 function getProfiles(users)
 {
+    var profiles = [];
     if (!(users instanceof Array))
     {
         var temp = users;
@@ -32,10 +33,13 @@ function getProfiles(users)
 
     for (var i = 0, j = users.length; i < j; i++)
     {
-        IN.API.Profile(users[i]).result(displayProfiles)
-                .error(displayProfilesErrors);
+        profiles.push(IN.API.Profile(users[i]).result(displayProfiles)
+                .error(displayProfilesErrors));
 
     }
+    
+    console.log(profiles);
+    return profiles;
 }
 function getConnections(users)
 {
@@ -57,6 +61,7 @@ function displayProfiles(profiles) {
     $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName + " " + member.lastName + "</p>");
     $('#profiles').append("<img src='" + member.pictureUrl + "' alt='" + member.firstName + " " + member.lastName + "'/>")
     console.log(member);
+    return profiles;
 }
 function displayProfilesErrors(error) {
     profilesDiv = document.getElementById("profiles");
@@ -107,7 +112,7 @@ function PeopleSearch(keywords) {
 //    var keywords = document.getElementById('keywords').innerText;
     console.log('People search for ' + keywords);
     IN.API.PeopleSearch()
-            .fields("id" , "firstName", "lastName", "pictureUrl", "distance", "siteStandardProfileRequest")
+            .fields("id", "firstName", "lastName", "pictureUrl", "distance", "siteStandardProfileRequest")
             .params({"keywords": keywords, "count": 20, "sort": "distance"})
             .result(displayPeopleSearch)
             .error(function error(e) { /* do nothing */
@@ -127,7 +132,7 @@ function displayPeopleSearch(peopleSearch) {
 
         // Look through result to make name and url.
         var nameText = members[member].firstName + " " + members[member].lastName;
-        var url = (members[member].siteStandardProfileRequest   ) ? members[member].siteStandardProfileRequest.url : "";
+        var url = (members[member].siteStandardProfileRequest) ? members[member].siteStandardProfileRequest.url : "";
         // Turn the number into English
         var distance = members[member].distance;
         var distanceText = '';
