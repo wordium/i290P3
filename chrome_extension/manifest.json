@@ -18,10 +18,10 @@
     "default_icon": "linkedin_icon.png"
     //"default_popup": "background.html"
   },
-  "content_scripts" : [{
+  /*"content_scripts" : [{
     "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
     "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/in/*"],
     "css": ["yelp-tagger.css"]
-  }],
+  }],*/
   "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://api.del.icio.us; object-src 'self'"
 }

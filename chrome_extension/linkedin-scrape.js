@@ -23,6 +23,7 @@ $(document).ready(function(){
 		//console.log(thing);
 		console.log(positions);
 		console.log(educations);
+		alert("Profile added");
 });
 
 function populatePositionsObjectCurrent(object) {
