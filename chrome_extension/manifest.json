@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+
+  "name": "LinkedIn Scraper",
+  "description": "This is a yelp tagger plugin",
+  "version": "1.0",
+  "permissions": [
+    "history",
+    "tabs",
+    "https://api.del.icio.us/"
+  ],
+  "browser_action": {
+    "default_icon": "yelp-icon-128.png",
+    "default_popup": "yelp-tagger.html"
+  },
+  "content_scripts" : [{
+    "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
+    "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/in/*"],
+    "css": ["yelp-tagger.css"]
+  },{
+    "js": ["jquery.2.0.3.js", "yelp-tagger-add.js"],
+    "matches": ["http://www.yelp.com/writeareview/biz/*", "https://www.yelp.com/writeareview/biz/*"],
+    "css": ["yelp-tagger.css"]
+  }],
+  "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://api.del.icio.us; object-src 'self'"
+}
