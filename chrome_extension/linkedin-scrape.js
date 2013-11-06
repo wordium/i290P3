@@ -2,7 +2,6 @@ var positions = [];
 var educations = [];
 
 $(document).ready(function(){
-	
 	//populating the current and past positions
 	$("#profile-experience").find($(".position")).each(function(index) {
 		if ($(this).find($(".dtstamp")).text()) {
@@ -24,7 +23,7 @@ $(document).ready(function(){
 		//console.log(thing);
 		console.log(positions);
 		console.log(educations);
-		});
+});
 
 function populatePositionsObjectCurrent(object) {
 	//this function is for populating data from the current position
@@ -47,7 +46,7 @@ function populatePositionsObjectCurrent(object) {
 		},
 	startDate : {
 			year : startDateInt[0],
-			month : "",
+			month : startDateInt[1],
 		},
 	endDate : {
 			isCurrent : "1",
@@ -99,9 +98,19 @@ function populatePositionsObject(object) {
 function populateEducationObject(object) {
 	//this function is for populating data from Education History
 	
-	//splitting the dates into month and year
-	var startDateInt = object.find($(".dtstart")).attr("title").split("-");
-	var endDateInt = object.find($(".dtend")).attr("title").split("-");
+	//splitting the dates into month and year. If start date or end date don't exist, replace with ""
+	if (object.find($(".dtstart")).attr("title")) {
+		var startDateInt = object.find($(".dtstart")).attr("title").split("-");	
+	} else {
+		var startDateInt = ["",""];
+	}
+	
+	if (object.find($(".dtend")).attr("title")) {
+		var endDateInt = object.find($(".dtend")).attr("title").split("-");	
+	} else {
+		var endDateInt = ["",""];
+	}
+	
 	//End Date might be problematic. I'm not sure what the html looks like if a user's most current education
 	//has 'Current' as it's end date.
 

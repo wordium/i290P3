@@ -2,16 +2,21 @@
   "manifest_version": 2,
 
   "name": "LinkedIn Scraper",
-  "description": "This is a yelp tagger plugin",
+  "description": "This is a Linked In Scraper",
   "version": "1.0",
+  "background": {
+    //"page" : "background.html"
+    "scripts": ["background.js"]
+  },
   "permissions": [
     "history",
     "tabs",
-    "https://api.del.icio.us/"
+    "activeTab",
+    "http://www.linkedin.com/in/*"
   ],
   "browser_action": {
-    "default_icon": "yelp-icon-128.png",
-    "default_popup": "yelp-tagger.html"
+    "default_icon": "linkedin_icon.png"
+    //"default_popup": "background.html"
   },
   "content_scripts" : [{
     "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
