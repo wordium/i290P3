@@ -18,13 +18,19 @@ function onLinkedInLoad() {
 function onLinkedInAuth()
 {
     var profiles = getProfiles("me");
+    console.log(profiles);
 //    getConnections("me");
 
 
 }
 function getProfiles(users)
 {
-    var profiles = [];
+    var loadedProfiles = [];
+    var fields = ["id", "first-name", 'last-name', 'formatted-name',
+        'headline', 'location', 'industry', 'summary',
+        'num-connections', 'specialties', 'picture-url',
+        'public-profile-url', 'three-past-positions', 'email-address',
+        'publications', 'skills', 'educations:(degree)', 'positions'];
     if (!(users instanceof Array))
     {
         var temp = users;
@@ -33,14 +39,98 @@ function getProfiles(users)
 
     for (var i = 0, j = users.length; i < j; i++)
     {
-        profiles.push(IN.API.Profile(users[i]).result(displayProfiles)
-                .error(displayProfilesErrors));
 
+//        var loadProfile = $.Deferred();
+        var profile;
+
+        console.log('loading profile');
+        IN.API.Profile(users[i])
+                .fields(fields)
+                .result(function(profiles) {
+                     profile = profiles.values[0];
+                    loadedProfiles[i] = profile;
+                    displayProfiles(profile);
+                    var member = new UserProfile(profile);
+                    console.log(member);
+                })
+                .error(displayProfilesErrors);
     }
-    
-    console.log(profiles);
-    return profiles;
+
+//    console.log(loadedProfiles);
+//    return loadedProfiles;
 }
+/**
+ * TODO
+ * @param {type} users
+ * @returns {Array}
+ */
+function getDefferedProfile(users)
+{
+
+    var loadedProfiles = [];
+    var fields = ["id", "first-name", 'last-name', 'formatted-name',
+        'headline', 'location', 'industry', 'summary',
+        'num-connections', 'specialties', 'picture-url',
+        'public-profile-url', 'three-past-positions', 'email-address',
+        'publications', 'skills', 'educations:(id,degree,school-name)', 'positions'];
+    if (!(users instanceof Array))
+    {
+        var temp = users;
+        var users = [temp];
+    }
+
+    for (var i = 0, j = users.length; i < j; i++)
+    {
+
+        var myObject = {
+            myMethod: function(myString) {
+                console.log('myString was passed from', myString);
+            }
+        };
+// Create deferred
+        var deferred = $.Deferred();
+
+// deferred.done(doneCallbacks [, doneCallbacks ])
+        deferred.done(function(method, string) {
+            console.log(this); // myObject
+
+            // myObject.myMethod(myString);
+            this[method](string);
+        });
+
+        deferred.resolve.call(myObject, 'myMethod', 'the context');
+
+        var loadProfile = $.Deferred();
+        var profile;
+
+        console.log('loading profile');
+        IN.API.Profile(users[i])
+                .fields(fields)
+                .result(function(profiles) {
+                    profile = profiles.values[0];
+                    loadedProfiles[i] = profile;
+                    var member = new UserProfile(profile);
+                    ;
+//                    displayProfiles(member);
+
+
+                })
+                .error(displayProfilesErrors);
+    }
+
+    console.log(loadedProfiles);
+    return loadedProfiles;
+    // Create an object
+
+
+
+// We could also do this:
+// deferred.resolveWith(myObject, ['myMethod', 'resolveWith']);
+// but it's somewhat annoying to pass an array of arguments.
+
+// => myString was passed from resolveWith
+}
+
 function getConnections(users)
 {
     if (!(users instanceof Array))
@@ -56,12 +146,17 @@ function getConnections(users)
                 .result(displayConnections);
     }
 }
-function displayProfiles(profiles) {
-    member = profiles.values[0];
-    $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName + " " + member.lastName + "</p>");
-    $('#profiles').append("<img src='" + member.pictureUrl + "' alt='" + member.firstName + " " + member.lastName + "'/>")
+function displayProfiles(member) {
+//    console.log(profiles);
+//    member = profiles.values[0];
+    /*
+     $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName
+     + " " + member.lastName + "</p>");
+     $('#profiles').append("<img src='" + member.pictureUrl + "' alt='"
+     + member.firstName + " " + member.lastName + "'/>");
+     */
     console.log(member);
-    return profiles;
+    return member;
 }
 function displayProfilesErrors(error) {
     profilesDiv = document.getElementById("profiles");
@@ -102,13 +197,13 @@ function eventPeopleSearch()
     $('#keyword-search-button').click(function() {
         console.log('people search ' + $('#keywords').val());
         PeopleSearch($('#keywords').val());
-    })
+    });
 }
 function PeopleSearch(keywords) {
-    // Call the PeopleSearch API with the viewer's keywords
-    // Ask for 4 fields to be returned: first name, last name, distance, and Profile URL
-    // Limit results to 10 and sort by distance
-    // On success, call displayPeopleSearch(); On failure, do nothing.
+// Call the PeopleSearch API with the viewer's keywords
+// Ask for 4 fields to be returned: first name, last name, distance, and Profile URL
+// Limit results to 10 and sort by distance
+// On success, call displayPeopleSearch(); On failure, do nothing.
 //    var keywords = document.getElementById('keywords').innerText;
     console.log('People search for ' + keywords);
     IN.API.PeopleSearch()
@@ -124,13 +219,12 @@ function displayPeopleSearch(peopleSearch) {
 //    var div = document.getElementById("peopleSearchResults");
     var div = "";
     div = "<ul>";
-
     // Loop through the people returned
     var members = peopleSearch.people.values;
     console.log(members);
     for (var member in members) {
 
-        // Look through result to make name and url.
+// Look through result to make name and url.
         var nameText = members[member].firstName + " " + members[member].lastName;
         var url = (members[member].siteStandardProfileRequest) ? members[member].siteStandardProfileRequest.url : "";
         // Turn the number into English
@@ -138,7 +232,7 @@ function displayPeopleSearch(peopleSearch) {
         var distanceText = '';
         switch (distance) {
             case 0:  // The viewer
-                distanceText = "you!"
+                distanceText = "you!";
                 break;
             case 1: // Within three degrees
             case 2: // Falling through
@@ -154,10 +248,9 @@ function displayPeopleSearch(peopleSearch) {
         }
 
         div += "<li><a href=\"" + url + "\">" + nameText +
-                "</a> is " + distanceText + "</li>"
+                "</a> is " + distanceText + "</li>";
     }
 
     div += "</ul>";
-
     $('#people-search-results').empty().append(div);
 }
