@@ -1,6 +1,6 @@
 {
-    "name": "Message Passing",
-    "description": "This is used as a message passing",
+    "name": "LinkedIn Scraper",
+    "description": "This is used to scrape a LinkedIn profile",
     "version": "1",
     "manifest_version": 2,
     "background": {
