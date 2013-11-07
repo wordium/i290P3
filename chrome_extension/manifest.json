@@ -1,27 +1,22 @@
 {
-  "manifest_version": 2,
-
-  "name": "LinkedIn Scraper",
-  "description": "This is a Linked In Scraper",
-  "version": "1.0",
-  "background": {
-    //"page" : "background.html"
-    "scripts": ["background.js"]
-  },
-  "permissions": [
-    "history",
-    "tabs",
-    "activeTab",
-    "http://www.linkedin.com/in/*"
-  ],
-  "browser_action": {
-    "default_icon": "linkedin_icon.png"
-    //"default_popup": "background.html"
-  },
-  /*"content_scripts" : [{
-    "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
-    "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/in/*"],
-    "css": ["yelp-tagger.css"]
-  }],*/
-  "content_security_policy": "script-src 'self' https://ajax.googleapis.com https://api.del.icio.us; object-src 'self'"
+    "name": "Message Passing",
+    "description": "This is used as a message passing",
+    "version": "1",
+    "manifest_version": 2,
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "permissions": [
+        "notifications",
+        "tabs",
+        "history",
+        "activeTab",
+        "storage",
+        "http://www.linkedin.com/in/*"
+    ],
+    "browser_action": {
+        "default_icon": "linkedin_icon.png"
+    }
 }

@@ -1,5 +1,6 @@
 var positions = [];
 var educations = [];
+var profile = [];
 
 $(document).ready(function(){
 	//populating the current and past positions
@@ -16,16 +17,21 @@ $(document).ready(function(){
 		populateEducationObject($(this));		
 	});
 
-		//position = $.trim($(this).text());
-		//console.log($(this).text());	
+	profile.push({
+		positionHistory: positions,
+		educationHistory: educations 
+	});
+	//console.log(positions);
+	//console.log(educations);
+	//console.log(profile);
+	alert("Profile added");
 		
-		//var thing = $("#profile-experience").html();
-		//console.log(thing);
-		console.log(positions);
-		console.log(educations);
-		alert("Profile added");
+	//this sends the object positions to background.js
+	chrome.runtime.sendMessage({objectProfileKey: JSON.stringify(profile)}, function(response) {
+		//console.log(response.farewell);
+	});
 });
-
+		
 function populatePositionsObjectCurrent(object) {
 	//this function is for populating data from the current position
 	var startDateInt = object.find($(".dtstart")).attr("title").split("-");
@@ -57,6 +63,7 @@ function populatePositionsObjectCurrent(object) {
 	summary : $.trim(object.find($(".description")).text()),
 
 	});
+
 }
 
 function populatePositionsObject(object) {
