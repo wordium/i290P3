@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 function UserProfile(/*JSON Object*/) {
     if (arguments.length === 1)
     {

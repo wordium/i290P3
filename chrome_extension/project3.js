@@ -1,6 +1,6 @@
 chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
     console.log(msg.data);
-    
+    thing = JSON.stringify(msg);
     	//console.log(msg.data);
     	for (i in msg.data) {
             picURL = msg.data.picURL;            
