@@ -16,12 +16,10 @@ function UserProfile(/*JSON Object*/) {
         this.title = profile.headline;
         this.summary = profile.summary;
         this.location = (profile.location) ? profile.location.name : "";
-
-
         this.positions = [];
         if (profile.positions)
         {
-            if (profile.positions.values) 
+            if (profile.positions.values)
             {
                 var pos = profile.positions.values;
                 for (var i = 0, j = pos.length; i < j; i++)
@@ -34,6 +32,8 @@ function UserProfile(/*JSON Object*/) {
          this.educations[i] = new Position(edu[i]);
          */
         this.industry = profile.industry;
+        this.pictureUrl = (profile.pictureUrl) ? profile.pictureUrl : "";
+        this.profileUrl = (profile.publicProfileUrl) ? profile.publicProfileUrl : "";
     }
     else {
         this.name = "";
@@ -45,6 +45,8 @@ function UserProfile(/*JSON Object*/) {
         this.positions = [];
         this.educations = [];
         this.industry = "";
+        this.pictureUrl = "";
+        this.profileUrl = "";
     }
 }
 

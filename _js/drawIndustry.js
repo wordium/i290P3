@@ -16,10 +16,17 @@ $(document).ready(function()
 });
 
 var IND_VIZ_ID = '#industry-viz';
+var IND_VIZ_ID_V = '#industry-viz-v';
+var IND_PREVIEW_ID = '#industry-member-preview ul';
+var USER_IND_PROFILE_CLASS = '.user-industry-profile';
+var IND_PROFILE_DIV_ID = '#user-profile';
+var IND_MAX_DRAW = 10;
 var indChart;
 var valueSet;
 var valueTitles = [];
 var values = [];
+var drawValues = [];
+var drawTitleValues = [];
 var maxValue = 0;
 var minValue = 0;
 var w;
@@ -31,7 +38,7 @@ var viz;
 var xPadding = 20;
 var yPadding = 40;
 var infoH = 400;
-var infoW = 400;
+var infoW = 0;
 var chartTitleH;
 var chartH;
 var chartW;
@@ -56,7 +63,10 @@ var yGap = 5;
 var colW;
 var barH;
 var minColW = 20;
-var minBarH = 20;
+var minBarH = 30;
+var colCount = 0;
+var profiles = [];
+
 //    draw = draw;
 //    prepareData = prepareData;
 //    drawAxis = drawAxis;
@@ -67,22 +77,82 @@ function init()
 {
 
 }
-function drawIndustryBarChart(data)
+function drawIndustryBarChart(profileData)
 {
 
-    valueSet = data;
+    profiles = profileData;
+    valueSet = loadIndustryData();
     valueTitles = [];
     values = [];
     maxValue = 0;
     minValue = 0;
-    w = 1200;
-    h = 400;
+    console.log($(IND_VIZ_ID).parent());
+
+    w = parseInt($(IND_VIZ_ID).css('width'));
+    h = parseInt($(IND_VIZ_ID).css('height'));
+//    console.log(w + "\t" + h);
     top = 0;
     left = 0;
     vizId = IND_VIZ_ID;
     viz = d3.select(vizId);
+    IND_MAX_DRAW = 10;
+    title = "Top 10 Industry Connections";
     draw('h');
+    /*vizId = IND_VIZ_ID_V;
+     viz = d3.select(vizId);
+     draw('v');
+     */
+}
 
+
+function drawConnections(connections)
+{
+//    console.log(connections);
+
+    var industries = {};
+    for (var i = 0, j = profiles.length; i < j; i++)
+    {
+
+        var userProfile = profiles[i];
+        var industry = userProfile.industry;
+        industries[industry] = (industries[industry]) ?
+                industries[industry] + 1 : 1;
+
+    }
+    console.log(industries);
+    var sortedIndustries = sortObjectByValue(industries);
+}
+function sortObjectByValue(objects)
+{
+    var sorted = {};
+    var sortable = [];
+    for (var key in objects)
+        sortable.push([key, objects[key]])
+    sortable.sort(function(a, b) {
+        return b[1] - a[1]
+    });
+    for (var i = 0, j = sortable.length; i < j; i++)
+    {
+//        console.log(sortable[i]);
+        sorted[sortable[i][0]] = sortable[i][1];
+    }
+    return sorted;
+
+}
+
+function loadIndustryData() {
+    var industries = {};
+    for (var i = 0, j = profiles.length; i < j; i++)
+    {
+
+        var userProfile = profiles[i];
+        var industry = userProfile.industry;
+        industries[industry] = (industries[industry]) ?
+                industries[industry] + 1 : 1;
+
+    }
+    console.log(industries);
+    return sortObjectByValue(industries);
 }
 function draw(orientation)
 {
@@ -94,25 +164,26 @@ function draw(orientation)
             .attr("height", h);
 //                .attr("top", top)
 //                .attr("left", left);
+    drawChartTitle();
     switch (orientation)
     {
         case 'h':
             drawXAxis();
             drawHBars();
             drawHTitles();
+            drawHBaseLine();
+            hBarEvents();
             break;
         case 'v':
             drawYAxis();
             drawVBars();
-            drawBTitles();
+            drawVTitles();
+            drawVBaseLine()
             break;
     }
-
 }
 function prepareData()
 {
-
-//    console.log(valueSet);
     var i = 0;
     for (var key in valueSet)
     {
@@ -120,47 +191,77 @@ function prepareData()
         valueTitles[i] = key;
         i++;
     }
-//    console.log(valueTitles);
+    colCount = (IND_MAX_DRAW > 0 && IND_MAX_DRAW < values.length) ?
+            IND_MAX_DRAW : values.length;
+
+
+    for (var i = 0; i < colCount - 1; i++)
+    {
+        drawValues[i] = values[i];
+        drawTitleValues[i] = valueTitles[i];
+    }
+    drawTitleValues[colCount - 1] = 'Others';
+    drawValues[colCount - 1] = 0;
+    for (var i = colCount - 1; i < values.length; i++)
+    {
+        drawValues[colCount - 1] += values[i];
+    }
+
+    var tempSet = {};
+    for (var i = 0; i < colCount; i++)
+    {
+        tempSet[drawTitleValues[i]] = drawValues[i];
+    }
+    tempSet = sortObjectByValue(tempSet);
+
+    var i = 0;
+    for (var key in tempSet)
+    {
+        drawValues[i] = tempSet[key];
+        drawTitleValues[i] = key;
+        i++;
+    }
 
     var max = 0;
-    for (var key in values)
-        max = (values[key] > max) ?
-                values[key] : max;
+    for (var key in drawValues)
+        max = (drawValues[key] > max) ?
+                drawValues[key] : max;
     maxValue = max;
     var min = maxValue;
-    for (var key in values)
-        min = (values[key] < min) ?
-                values[key] : min;
+    for (var key in drawValues)
+        min = (drawValues[key] < min) ?
+                drawValues[key] : min;
     minValue = min;
-//    console.log(minValue + "\t" + maxValue);
+
 }
 
 function prepareScale(orientation)
 {
     chartTitleH = (title) ? 20 : 0;
-    var count = values.length;
+    h = (minBarH + xGap) * colCount + 2 * yPadding + chartTitleH;
+
     calcColumnWidth();
     calcBarHeight();
-    switch (orientation)
-    {
-        case 'h':
-            if (barH < minBarH)
-            {
-                h = (minBarH + xGap) * count + 2 * yPadding + chartTitleH;
-                console.log("new h=" + h);
-                calcBarHeight();
-            }
-            break;
-        case 'v':
-            if (colW < minCoLW)
-            {
-                w = (minColW + xGap) * count + 2 * xPaddding + infoW;
-                console.log('new w=' + w);
-                calcColumnWidth();
-            }
-    }
-
-
+    /*
+     switch (orientation)
+     {
+     case 'h':
+     
+     if (barH < minBarH)
+     {
+     h = (minBarH + xGap) * colCount + 2 * yPadding + chartTitleH;
+     //                $(IND_VIZ_ID).css('height', h);
+     calcBarHeight();
+     }
+     break;
+     case 'v':
+     if (colW < minColW)
+     {
+     w = (minColW + xGap) * colCount + 2 * xPaddding + infoW;
+     calcColumnWidth();
+     }
+     }
+     */
 
     chartH = h - 2 * yPadding - chartTitleH;
     chartW = w - 2 * xPadding - infoW;
@@ -171,14 +272,13 @@ function prepareScale(orientation)
 }
 function calcColumnWidth()
 {
-    colW = (w - 2 * xPadding - values.length * xGap) / values.length;
-    console.log("colW=" + colW);
+    colW = (w - 2 * xPadding - colCount * xGap) / colCount;
 
 }
 function calcBarHeight()
 {
-    barH = (h - 2 * yPadding - chartTitleH - values.length * xGap) / values.length;
-    console.log('barH=' + barH);
+    barH = (h - 2 * yPadding - chartTitleH - colCount * xGap) / colCount;
+
 }
 function drawYAxis()
 {
@@ -230,33 +330,27 @@ function drawXAxis()
 }
 function drawVBars()
 {
-
-//    for (var i = 0, j = datasetAverageByYear.length; i < j; i++)
-//        addedData[columnCount + i] = datasetAverageByYear[i];
-//    columnCount += datasetAverageByYear.length;
-    console.log(values);
     viz.selectAll("rect")
-            .data(values)
+            .data(drawValues)
             .enter()
             .append("rect")
             .attr({
                 "width": colW,
                 "height": function(d, i) {
-//                    console.log(i + "\t" + d + "\t" + yScale(d));
                     return yScale(d);
                 },
                 "x": function(d, i) {
                     return (i) * (colW + 1 * xGap) + 1 * xPadding;
                 },
                 "y": function(d, i) {
-                    return chartTope - yScale(d);
+                    return chartTop - yScale(d);
                 },
                 "desc": function(d, i) {
                     var str = i + "\t" + values[i];
                     return str;
                 },
                 "class": function(d, i) {
-                    return "year-bar " + "year-bar-" + values[i];
+                    return "industry-column industry-column-" + i;
                 }
             });
 }
@@ -264,13 +358,12 @@ function drawVBars()
 function drawHBars()
 {
     viz.selectAll("rect")
-            .data(values)
+            .data(drawValues)
             .enter()
             .append("rect")
             .attr({
                 "height": barH,
                 "width": function(d, i) {
-                    console.log(i + "\t" + d + "\t" + xScale(d));
                     return xScale(d);
                 },
                 "x": function(d, i) {
@@ -282,11 +375,14 @@ function drawHBars()
 //                    return h - yScale(d) - yPadding;
                 },
                 "desc": function(d, i) {
-                    var str = i + "\t" + values[i];
+                    var str = drawTitleValues[i];
                     return str;
                 },
                 "class": function(d, i) {
-                    return "year-bar " + "year-bar-" + values[i];
+                    return "industry-column";
+                },
+                "id": function(d, i) {
+                    return "industry-column-h-" + i;
                 }
             });
 }
@@ -294,11 +390,10 @@ function drawHBars()
 function drawVTitles()
 {
     viz.selectAll("text.name")
-            .data(valueTitles)
+            .data(drawTitleValues)
             .enter()
             .append("text")
             .text(function(d, i) {
-                console.log(d);
                 return d;
             })
             .attr({
@@ -307,19 +402,21 @@ function drawVTitles()
                 },
                 "y": h - yPadding,
                 "text-anchor": "middle",
-                "class": "titles"
+                "class": "titles column-title-" + i,
+                "id": function(d, i) {
+                    return "industry-column-v-" + i;
+                }
             });
 }
 
 function drawHTitles()
 {
     viz.selectAll("text.name")
-            .data(valueTitles)
+            .data(drawTitleValues)
             .enter()
             .append("text")
             .text(function(d, i) {
-                console.log(d);
-                return d + " - " + values[i];
+                return d + " - " + drawValues[i];
             })
             .attr({
                 "x": function(d, i) {
@@ -327,9 +424,189 @@ function drawHTitles()
                 },
                 "y": function(d, i) {
 //                    return h - yPadding;
-                    return i * (barH + xGap) + yPadding + chartTitleH + 16;
+                    return i * (barH + xGap) + yPadding + chartTitleH + barH / 2 + xGap;
                 },
                 "text-anchor": "left",
                 "class": "titles"
             });
+}
+
+function drawChartTitle()
+{
+    viz.append("text")
+            .text(title)
+            .attr({
+                "x": chartW / 2,
+                "y": chartTitleH + 5,
+                "text-anchor": "middle",
+                "class": "chart-title"
+            });
+
+}
+
+
+function drawVBaseLine()
+{
+
+    viz.append("line")
+            .attr('class', 'base-line')
+            .attr({
+                "x1": xPadding,
+                "x2": chartW - xPadding,
+                "y1": chartH - yPadding,
+                "y2": chartH - yPadding
+            });
+}
+function drawHBaseLine()
+{
+    viz.append("line")
+            .attr('class', 'base-line')
+            .attr({
+                "x1": xPadding,
+                "x2": xPadding,
+                "y1": chartH + yPadding + chartTitleH,
+                "y2": chartH
+            });
+}
+function vColEvents()
+{
+
+}
+
+function hBarEvents() {
+
+    $(IND_VIZ_ID + " rect").unbind("mouseenter")
+            .unbind("mouseleave")
+            .unbind("click");
+
+//    $("#visualization .year-bar").unbind("click");
+// hover event interaction
+    $(IND_VIZ_ID + " rect")
+            .on("mouseenter", function()
+            {
+                var self = $(this);
+                self.animate({"opacity": .8}, 100);
+                self.attr('class', self.attr('class') + ' selected-column');
+            })
+            .on("mouseleave", function() {
+                var self = $(this);
+                self.animate({"opacity": 1}, 100);
+                self.attr('class', self.attr('class').replace('selected-column', ""));
+            })
+            .on("click", function() {
+                var self = $(this);
+                var industry = "" + self.attr("desc");
+
+
+                displayPreview(industry);
+            });
+}
+
+
+function profilePreviewEvents()
+{
+
+    $(USER_IND_PROFILE_CLASS).unbind("mouseenter")
+            .unbind("mouseleave")
+            .unbind("click");
+
+//    $("#visualization .year-bar").unbind("click");
+// hover event interaction
+    $(USER_IND_PROFILE_CLASS)
+            .on("mouseenter", function()
+            {
+                var self = $(this);
+                self.animate({"opacity": .8}, 100);
+                self.attr('class', self.attr('class') + ' user-industry-profile-hover');
+            })
+            .on("mouseleave", function() {
+                var self = $(this);
+                self.animate({"opacity": 1}, 100);
+                self.attr('class', self.attr('class').replace(' user-industry-profile-hover', ""));
+            })
+            .on("click", function() {
+                var self = $(this);
+                var id = self.attr('id');
+                id = id.replace('preview-profile-', '');
+                console.log(id);
+                var profile;
+
+                for (var i = 0, j = profiles.length; i < j; i++)
+                {
+                    console.log(profiles[i].id + "\t" + profiles[i].industry);
+//                    if(profiles[i].id === id || $.inArray(profiles[i].industry, drawTitleValues) === -1)
+                    profile = (profiles[i].id === id) ? profiles[i] : profile;
+                }
+                console.log(profile);
+
+                displayProfile(profile);
+            });
+}
+
+function displayPreview(industry)
+{
+    $(IND_PREVIEW_ID).parent().css('height', h + 'px');
+    $(IND_PREVIEW_ID).empty();
+    var industryProfiles = [];
+//    console.log(industry);
+    for (var i = 0, j = profiles.length; i < j; i++)
+    {
+        var profile = new UserProfile();
+        profile = profiles[i];
+//        console.log(profile);
+        if (profile.industry === industry || $.inArray(profile.industry, drawTitleValues) === -1)
+        {
+            industryProfiles.push(profile);
+            var html = $(formatPreviewProfileHTML(profile));
+            $(IND_PREVIEW_ID).append(html);
+        }
+    }
+    profilePreviewEvents();
+
+}
+
+function displayProfile(profile)
+{
+    var html = $(formatProfileHTML(profile));
+    $(IND_PROFILE_DIV_ID).empty().append(html);
+}
+
+/**
+ * 
+ * @param {UserProfile} profile
+ * @returns {undefined}
+ */
+function formatPreviewProfileHTML(profile)
+{
+    var hstr = "<li id='preview-profile-" + profile.id
+            + "' class='user-industry-profile'>"
+//            + "<a href='" + profile.profileUrl + "' target='_blank'>"
+            + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
+            + "<h1>" + profile.name
+            + "</h1>"
+//            +"</a>"
+            + "</li>";
+    return hstr;
+
+}
+
+/**
+ * 
+ * @param {UserProfile} profile
+ * @returns {String}
+ */
+function formatProfileHTML(profile)
+{
+    var hstr = "<div id='profile-" + profile.id
+            + "' class='user-profile'>"
+            + "<a href='" + profile.profileUrl + "' target='_blank'>"
+            + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
+            + "<h1>" + profile.name
+            + "</h1></a>"
+            + "<h2>" + profile.title + "</h2>"
+            + ((profile.positions[0]) ? "<h2>" + profile.positions[0].company + "</h2>" : "")
+            + ((profile.summary) ? "<h1>Summary:</h1><p>" + profile.summary + "</p>" : "")
+            + "</div>";
+    return hstr;
+
 }

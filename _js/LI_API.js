@@ -13,7 +13,7 @@ $(document).ready(function()
     init();
 });
 var LI_Athenticated = false;
-var COUNT_LIMIT = 2000;
+var COUNT_LIMIT = 0;
 
 function init() {
     eventPeopleSearch();
@@ -28,8 +28,7 @@ function onLinkedInAuth()
 //    var profiles = getProfiles("me");
 
     var connections = getConnections("me");
-//    console.log(connections);
-//    getConnections("me");
+
 
 
 }
@@ -46,7 +45,6 @@ function getProfiles(users)
     {
 //        var loadProfile = $.Deferred();
         var profile;
-        console.log('loading profile');
         IN.API.Profile(users[i])
                 .fields(PROFILE_FIELDS)
                 .result(function(profiles) {
@@ -54,96 +52,35 @@ function getProfiles(users)
                     loadedProfiles[i] = profile;
                     displayProfiles(profile);
                     var member = new UserProfile(profile);
-                    console.log(member);
+//                    console.log(member);
                 })
                 .error(displayProfilesErrors);
     }
 
-//    console.log(loadedProfiles);
-//    return loadedProfiles;
-}
-/**
- * TODO
- * @param {type} users
- * @returns {Array}
- */
-function getDefferedProfile(users)
-{
-
-    var loadedProfiles = [];
-    var fields = ["id", "first-name", 'last-name', 'formatted-name',
-        'headline', 'location', 'industry', 'summary',
-        'num-connections', 'specialties', 'picture-url',
-        'public-profile-url', 'three-past-positions', 'email-address',
-        'publications', 'skills', 'educations:(id,degree,school-name)', 'positions'];
-    if (!(users instanceof Array))
-    {
-        var temp = users;
-        var users = [temp];
-    }
-
-    for (var i = 0, j = users.length; i < j; i++)
-    {
-
-        var myObject = {
-            myMethod: function(myString) {
-                console.log('myString was passed from', myString);
-            }
-        };
-// Create deferred
-        var deferred = $.Deferred();
-// deferred.done(doneCallbacks [, doneCallbacks ])
-        deferred.done(function(method, string) {
-            console.log(this); // myObject
-
-            // myObject.myMethod(myString);
-            this[method](string);
-        });
-        deferred.resolve.call(myObject, 'myMethod', 'the context');
-        var loadProfile = $.Deferred();
-        var profile;
-        console.log('loading profile');
-        IN.API.Profile(users[i])
-                .fields(fields)
-                .result(function(profiles) {
-                    profile = profiles.values[0];
-                    loadedProfiles[i] = profile;
-                    var member = new UserProfile(profile);
-                    ;
-//                    displayProfiles(member);
-
-
-                })
-                .error(displayProfilesErrors);
-    }
-
-    console.log(loadedProfiles);
-    return loadedProfiles;
-    // Create an object
-
-
-
-// We could also do this:
-// deferred.resolveWith(myObject, ['myMethod', 'resolveWith']);
-// but it's somewhat annoying to pass an array of arguments.
-
-// => myString was passed from resolveWith
 }
 
 function getConnections(users)
 {
-    IN.API.Connections(users)
-            .fields(PROFILE_FIELDS)
-            .params({"count": COUNT_LIMIT})
-            .result(drawConnections)
-            .error(function() {
-                console.log("deferred rejected");
-            });
+    if (COUNT_LIMIT > 0)
+        IN.API.Connections(users)
+                .fields(PROFILE_FIELDS)
+                .params({"count": COUNT_LIMIT})
+                .result(drawConnections)
+                .error(function() {
+                    console.log("deferred rejected");
+                });
+    else
+        IN.API.Connections(users)
+                .fields(PROFILE_FIELDS)
+                .result(drawConnections)
+                .error(function() {
+                    console.log("deferred rejected");
+                });
 }
 
 function getDeferredConnections(user)
 {
-    console.log('getting connections for ' + user);
+//    console.log('getting connections for ' + user);
     return IN.API.Connections(user)
             .fields(PROFILE_FIELDS)
             .params({"count": 20})
@@ -163,7 +100,7 @@ function displayProfiles(member) {
      $('#profiles').append("<img src='" + member.pictureUrl + "' alt='"
      + member.firstName + " " + member.lastName + "'/>");
      */
-    console.log(member);
+//    console.log(member);
     return member;
 }
 function displayProfilesErrors(error) {
@@ -178,54 +115,18 @@ function findPeopleByIndustry(industry)
 }
 function drawConnections(connections)
 {
-    console.log(connections);
+//    console.log(connections);
     var members = connections.values; // The list of members you are connected to
     var profiles = [];
-    var industries = {};
     for (var i = 0, j = members.length; i < j; i++)
     {
-//        try {
         var member = members[i];
-//            console.log(member);
         var userProfile = new UserProfile(member);
-//        console.log(userProfile);
-        var industry = userProfile.industry;
         profiles[i] = userProfile;
-//            console.log(industry);
-        industries[industry] = (industries[industry]) ?
-                industries[industry] + 1 : 1;
-        /*      }
-         catch (err)
-         {
-         console.log(err);
-         continue;
-         }
-         */
     }
-//    console.log(profiles);
-    console.log(industries);
-    var sortedIndustries = sortObjectByValue(industries);
-    drawIndustryBarChart(sortedIndustries); //drawing.js
+    drawIndustryBarChart(profiles); //drawing.js
 }
-function sortObjectByValue(objects)
-{
-    var sorted = {};
-    var sortable = [];
-    for (var key in objects)
-        sortable.push([key, objects[key]])
-    sortable.sort(function(a, b) {
-        return b[1] - a[1]
-    });
-    console.log(sortable);
-    for (var i = 0, j = sortable.length; i < j; i++)
-    {
-//        console.log(sortable[i]);
-        sorted[sortable[i][0]] = sortable[i][1];
-    }
-    console.log(sorted);
-    return sorted;
 
-}
 /**
  * 
  * @param {UserProfile} userProfile

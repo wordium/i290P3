@@ -8,20 +8,31 @@ and open the template in the editor.
     Author     : Hassan
 */
 body{
-    width:1000px;
+    width:1200px;
 }
 #people-search{
-   
+
     width:45%;
 }
 #connections{
-   
     width:100%;
+    /*height:300px;*/
+}
+#industry-viz{
+    float:left;
+    width: calc(100% - 610px);
+    /*height:300px;*/
 }
 
+#industry-member-preview{
+    float:left;
+    width : 400px;
+    overflow-y: auto;
+
+}
 .timeLine {
-  stroke: black; 
-  stroke-width: 2px;
+    stroke: black; 
+    stroke-width: 2px;
 }
 svg{
     background:#ffe;
@@ -60,3 +71,39 @@ svg{
     stroke-width:1px;
 }
 
+/* PROFILE */
+
+.user-industry-profile
+{
+    width: 90px;
+    padding:0 0 5px 5px;
+    float:left;
+}
+.user-industry-profile :hover
+{
+    background-color:#eee;
+}
+/*
+.user-industry-profile-hover {
+    background-color:#eee;
+}*/
+
+.user-industry-profile ul li:hover{
+    background-color: #eee;         
+}
+.user-industry-profile img
+{
+    width: 80px;
+    height:80px;
+
+}
+.user-industry-profile h1
+{
+    font-size:.75em;
+}
+
+#user-profile{
+    width:200px;
+    border:1px solid #fff;
+    float:left;
+}
