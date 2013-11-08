@@ -18,17 +18,17 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     
             //Created new tab
             chrome.tabs.create({
-            url: "notification.html"
+            url: "project3.html"
             }, function (tab) {
             //just to make sure the tab is activated..
-            chrome.tabs.onUpdated.addListener(function (tabId) {
-                if (tabId == tab.id) {
+            //chrome.tabs.onUpdated.addListener(function (tabId) {
+                //if (tabId == tab.id) {
                     //Send Mesage
-                    chrome.tabs.sendMessage(tabId, {
+                chrome.tabs.sendMessage(tab.id, {
                         //"data": "whatever_data"
-                        "data": JSON.parse(request.objectProfileKey) //to be sent to notification.js
+                    "data": JSON.parse(request.objectProfileKey) //to be sent to notification.js
                     });
-                }
-            });
+                //}
+            //});
             });
   });

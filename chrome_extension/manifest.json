@@ -8,6 +8,11 @@
             "background.js"
         ]
     },
+    "web_accessible_resources": [
+        "project3.js",
+        "project3.html"
+
+        ],
     "permissions": [
         "notifications",
         "tabs",

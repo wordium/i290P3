@@ -16,8 +16,31 @@ $(document).ready(function(){
 	$("#profile-education").find($(".position")).each(function(index) {
 		populateEducationObject($(this));		
 	});
+		//finding the ID in the linkedin profile page. It's located in a script tag, near newTrkInfo
+		//credit to http://stackoverflow.com/questions/926580/find-text-string-using-jquery
+	   $('*', 'script')
+        .andSelf()
+        .contents()
+        .filter(function(){
+            return this.nodeType === 3;
+        })
+        .filter(function(){
+            // Only match when contains 'newTrkInfo' anywhere in the text
+            return this.nodeValue.indexOf('newTrkInfo') != -1;
+        })
+        .each(function(){
+            // Do something with this.nodeValue
+            var nodeString = this.nodeValue;
+            // Using Regex to get the profile ID
+            var nodeStringRE = nodeString.match("newTrkInfo = '(.*),'");
+            profileID = nodeStringRE[1];
+        });
 
+	//console.log(thing);
 	profile.push({
+		id: profileID, 
+		name: $(".given-name").text() + " " + $(".family-name").text(),
+		picURL: $("#profile-picture").find($("img")).attr("src"),
 		positionHistory: positions,
 		educationHistory: educations 
 	});
