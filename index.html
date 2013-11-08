@@ -12,7 +12,8 @@ and open the template in the editor.
         <link rel="stylesheet" type="text/css" href="_css/style.css" />
         <script type="text/javascript" src="_js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="_js/d3.min.js"></script>	
-        <script type="text/javascript" src="_js/LI_API2.js"></script>
+        <script type="text/javascript" src="_js/drawIndustry.js"></script>
+        <script type="text/javascript" src="_js/LI_API.js"></script>
         <script type="text/javascript" src="_js/LI_Profile.js"></script>
 
         <!--<script type="text/javascript" src="_js/oauth/oauth.js"></script>-->
@@ -35,30 +36,40 @@ and open the template in the editor.
 
     </head>
     <body>
-     
-        <script type="IN/Login"></script>
-        <div id="profiles"></div>
-        <div id="connections" ></div>
-        <div id="people-search">
-            <label id="keyword-search-label">Keywords</label>
-            <input type="text" id="keywords" placeholder="Enter keywords here"/>
-            <input type="button" id="keyword-search-button" value="Search"/>
-        
-        <div id="people-search-results">
-        </div>
 
-        <div class="personTimeline">
-            <div class="photo">Person's photo goes here</div>
-            <div class="about">Description about person goes here</div>
-            <svg class="timeline" id="testSVG">
-                <line x1="20" y1="100" x2="100" y2="20" class="timeLine"/>
-                <rect x="100" y="100" width="100" height="100" class="school"/>
-                <rect x="1" y="1" width="100" height="10" class="work"/>
-                <rect x="30" y="30" width="100" height="10" class="popup" />
-            </svg>
-        </div>
-        
-        </div>
+        <script type="IN/Login"></script>
+        <section id="connection-by-industry">
+            <div id="connections" >
+                <svg id="industry-viz" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                </svg> 
+            </div> 
+        </section>
+
+
+        <section>
+            <div id="profiles"></div>
+
+            <div id="people-search">
+                <label id="keyword-search-label">Keywords</label>
+                <input type="text" id="keywords" placeholder="Enter keywords here"/>
+                <input type="button" id="keyword-search-button" value="Search"/>
+
+                <div id="people-search-results">
+                </div>
+
+                <div class="personTimeline">
+                    <div class="photo">Person's photo goes here</div>
+                    <div class="about">Description about person goes here</div>
+                    <svg class="timeline" id="testSVG">
+                    <line x1="20" y1="100" x2="100" y2="20" class="timeLine"/>
+                    <rect x="100" y="100" width="100" height="100" class="school"/>
+                    <rect x="1" y="1" width="100" height="10" class="work"/>
+                    <rect x="30" y="30" width="100" height="10" class="popup" />
+                    </svg>
+                </div>
+
+            </div>
+        </section>
         <!--<script type="in/login" data-onAuth="onLinkedInAuth"></script>-->
     </body>
 </html>

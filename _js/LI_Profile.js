@@ -8,24 +8,32 @@
 function UserProfile(/*JSON Object*/) {
     if (arguments.length === 1)
     {
+
         var profile = arguments[0];
+//        console.log(profile);
         this.name = profile.formattedName;
         this.email = profile.emailAddress;
         this.id = profile.id;
         this.title = profile.headline;
         this.summary = profile.summary;
-        this.location = profile.location.name;
+        this.location = (profile.location) ? profile.location.name : "";
 
-        var pos = profile.positions.values;
+
         this.positions = [];
-        for (var i = 0, j = pos.length; i < j; i++)
-            this.positions[i] = new Position(pos[i]);
-
+        if (profile.positions)
+        {
+            if (profile.positions.values) 
+            {
+                var pos = profile.positions.values;
+                for (var i = 0, j = pos.length; i < j; i++)
+                    this.positions[i] = new Position(pos[i]);
+            }
+        }
         this.educations = [];
-        var edu = profile.educations.values;/*
-        for (var i = 0, j = edu.length; i < j; i++)
-            this.educations[i] = new Position(edu[i]);
-*/
+        var edu = (profile.educations) ? profile.educations.values : "";/*
+         for (var i = 0, j = edu.length; i < j; i++)
+         this.educations[i] = new Position(edu[i]);
+         */
         this.industry = profile.industry;
     }
     else {
@@ -46,15 +54,15 @@ function Position(/*JSON Object*/)
     if (arguments.length === 1)
     {
         var position = arguments[0];
-
         this.id = position.id;
         this.company = (position.company.name) ? position.company.name : position.degree; /*or institute*/
         this.industry = position.company.industry;
-        this.companyId = position.company.id;
         this.title = position.title; /*or degree*/
         this.subTitle = ""; /* or field of study*/
-        this.startDate = new Date(position.startDate.year,
-                position.startDate.month, 1);
+        this.startYear = (position.startDate) ? position.startDate.year : 0;
+        this.startMonth = (position.startDate) ? position.startDate.month : 0;
+        this.startDate = (position.startDate) ? new Date(position.startDate.year,
+                position.startDate.month, 1) : "";
         this.endDate = (position.isCurrent)
                 ? new Date() : new Date(position.endDate.year,
                 position.endDate.month, 1);
@@ -66,9 +74,10 @@ function Position(/*JSON Object*/)
         this.id = 0;
         this.company = ""; /*or institute*/
         this.industry = "";
-         this.companyId = 0;
         this.title = ""; /*or degree*/
         this.subTitle = ""; /* or field of study*/
+        this.startYear = 0;
+        this.startMonth = 0;
         this.startDate = new Date();
         this.endDate = new Date();
         this.summary = "";

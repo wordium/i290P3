@@ -2,317 +2,318 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- 
- *
- *  */
-
-
+ */
+var PROFILE_FIELDS = ["id", "first-name", 'last-name', 'formatted-name',
+    'headline', 'location', 'industry', 'summary',
+    'num-connections', 'specialties', 'picture-url',
+    'public-profile-url', 'three-past-positions', 'email-address',
+    'publications', 'skills', 'educations:(degree)', 'positions'];
 $(document).ready(function()
 {
     init();
 });
-
-
-var Company;
-var Application_Name;
-var API_Key;
-var Secret_Key;
-var OAuth_User_Token;
-var OAuth_User_Secret;
-var PROPERTIES_FILENAME = 'apikeys.properties';
-var ACCESS_TOKEN;
+var LI_Athenticated = false;
+var COUNT_LIMIT = 2000;
 
 function init() {
-    readProperties(PROPERTIES_FILENAME)
-//    main();
+    eventPeopleSearch();
 }
-function loadProperties(filename)
-{
-    java;
-    var p = new java.util.Properties();
-    var fis = new java.io.FileInputSteam(filename);
-    p.load(fis);
-    fis.close();
+function onLinkedInLoad() {
+    IN.Event.on(IN, "auth", onLinkedInAuth);
+}
 
-    Company = p.getProperty("Company");
-    Application_Name = p.getProperty("Application_Name");
-    API_Key = p.getProperty("API_KEY");
-    Secret_Key = p.getProperty("Secret_Key");
-    OAuth_User_Token = p.getProperty("OAuth_User_Token");
-    OAuth_User_Secret = p.getProperty("OAuth_User_Secret");
-    console.log(API_Key);
-}
-function readProperties(file)
+function onLinkedInAuth()
 {
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function()
+    LI_Athenticated = true;
+//    var profiles = getProfiles("me");
+
+    var connections = getConnections("me");
+//    console.log(connections);
+//    getConnections("me");
+
+
+}
+function getProfiles(users)
+{
+    var loadedProfiles = [];
+    if (!(users instanceof Array))
     {
-        if (rawFile.readyState === 4)
-        {
-            if (rawFile.status === 200 || rawFile.status == 0)
-            {
+        var temp = users;
+        var users = [temp];
+    }
 
-                var allText = rawFile.responseText;
-                var lines = allText.split('\n');
-//                console.log(lines);
-                for (var i = 0, j = lines.length; i < j; i++)
-                {
-                    var line = "";
-                    line = lines[i];
-//                    console.log(line);
-                    if (line.substr(0, 1) !== '#')
-                    {
+    for (var i = 0, j = users.length; i < j; i++)
+    {
+//        var loadProfile = $.Deferred();
+        var profile;
+        console.log('loading profile');
+        IN.API.Profile(users[i])
+                .fields(PROFILE_FIELDS)
+                .result(function(profiles) {
+                    profile = profiles.values[0];
+                    loadedProfiles[i] = profile;
+                    displayProfiles(profile);
+                    var member = new UserProfile(profile);
+                    console.log(member);
+                })
+                .error(displayProfilesErrors);
+    }
 
-                        var prop = line.split('=');
-//                        console.log(prop);
-                        switch (prop[0])
-                        {
-                            case 'Company':
-                                Company = prop[1]
-                                break;
-                            case 'Application_Name':
-                                Application_Name = prop[1]
-                                break;
-                            case 'API_Key':
-                                API_Key = prop[1]
-                                break;
-                            case 'Secret_Key':
-                                Secret_Key = prop[1]
-                                break;
-                            case 'OAuth_User_Token':
-                                OAuth_User_Token = prop[1]
-                                break;
-                            case 'OAuth_User_Secret':
-                                OAuth_User_Secret = prop[1]
-                                break;
-                        }
+//    console.log(loadedProfiles);
+//    return loadedProfiles;
+}
+/**
+ * TODO
+ * @param {type} users
+ * @returns {Array}
+ */
+function getDefferedProfile(users)
+{
 
-                    }
+    var loadedProfiles = [];
+    var fields = ["id", "first-name", 'last-name', 'formatted-name',
+        'headline', 'location', 'industry', 'summary',
+        'num-connections', 'specialties', 'picture-url',
+        'public-profile-url', 'three-past-positions', 'email-address',
+        'publications', 'skills', 'educations:(id,degree,school-name)', 'positions'];
+    if (!(users instanceof Array))
+    {
+        var temp = users;
+        var users = [temp];
+    }
 
-                }
+    for (var i = 0, j = users.length; i < j; i++)
+    {
+
+        var myObject = {
+            myMethod: function(myString) {
+                console.log('myString was passed from', myString);
             }
-        }
+        };
+// Create deferred
+        var deferred = $.Deferred();
+// deferred.done(doneCallbacks [, doneCallbacks ])
+        deferred.done(function(method, string) {
+            console.log(this); // myObject
+
+            // myObject.myMethod(myString);
+            this[method](string);
+        });
+        deferred.resolve.call(myObject, 'myMethod', 'the context');
+        var loadProfile = $.Deferred();
+        var profile;
+        console.log('loading profile');
+        IN.API.Profile(users[i])
+                .fields(fields)
+                .result(function(profiles) {
+                    profile = profiles.values[0];
+                    loadedProfiles[i] = profile;
+                    var member = new UserProfile(profile);
+                    ;
+//                    displayProfiles(member);
+
+
+                })
+                .error(displayProfilesErrors);
     }
-    rawFile.send(null);
+
+    console.log(loadedProfiles);
+    return loadedProfiles;
+    // Create an object
+
+
+
+// We could also do this:
+// deferred.resolveWith(myObject, ['myMethod', 'resolveWith']);
+// but it's somewhat annoying to pass an array of arguments.
+
+// => myString was passed from resolveWith
 }
-function main()
+
+function getConnections(users)
 {
-    var credentials_json = loadCookie();
-    if (validateSignature(credentials_json))
-    {
-        ACCESS_TOKEN = credentials_json.access_token;
-        makeAPICall();
-    }
+    IN.API.Connections(users)
+            .fields(PROFILE_FIELDS)
+            .params({"count": COUNT_LIMIT})
+            .result(drawConnections)
+            .error(function() {
+                console.log("deferred rejected");
+            });
 }
 
-function makeAPICall()
+function getDeferredConnections(user)
 {
-    // configuration settings
-//$consumer_key = 'YOUR_API_KEY';
-//$consumer_secret = 'YOUR_SECRET_KEY';
-//    var access_token_url = 'https://api.linkedin.com/uas/oauth/accessToken';
-
-    var requestURL = 'https://api.linkedin.com/v1/people/~?oauth2_access_token=' + ACCESS_TOKEN;
-    /*   
-     $.ajax({ //my ajax request
-     url: "_URL_I_AM_MAKING_REQUEST_TO_",
-     type: "GET",
-     cache: false,
-     dataType: "json",
-     crossDomain: true,
-     data: { _mydata_
-     success : function(response){}
-     });*/
-
-
-    $.ajax({
-        type: 'GET',
-        url: requestURL,
-        processData: true,
-        data: {},
-        dataType: "json",
-        success: function(data) {
-            processData(data);
-        }
-    });
-
-    $.get(requestURL).done(function(data) {
-        console.log(data);
-    });
+    console.log('getting connections for ' + user);
+    return IN.API.Connections(user)
+            .fields(PROFILE_FIELDS)
+            .params({"count": 20})
+            .result(function(connections) {
+                return connections;
+            })
+            .error(function() {
+                console.log("deferred rejected");
+            });
+}
+function displayProfiles(member) {
+//    console.log(profiles);
+//    member = profiles.values[0];
     /*
-     
-     var accessor = {consumerSecret: SECRET_KEY
-     , tokenSecret: ACCESS_TOKEN; }
-     var message = {action: POST
-     , method: form.method
-     , parameters: []
-     };
+     $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName
+     + " " + member.lastName + "</p>");
+     $('#profiles').append("<img src='" + member.pictureUrl + "' alt='"
+     + member.firstName + " " + member.lastName + "'/>");
      */
-// init the client
-    /*
-     var oauth = new OAuth(API_KEY, Secret_Key);
-     oauth.
-     // swap 2.0 token for 1.0a token and secret
-     var oauth.fetch(access_token_url, array('xoauth_oauth2_access_token' => $access_token), OAUTH_HTTP_METHOD_POST);
-     // parse the query string received in the response
-     parse_str($oauth->getLastResponse(), $response);
-     
-     // Debug information
-     print "OAuth 1.O Access Token = " . $response['oauth_token'] . "\n";
-     print "OAuth 1.O Access Token Secret = " . $response['oauth_token_secret'] . "\n";
-     
-     */
+    console.log(member);
+    return member;
 }
-function processData(data) {
-    console.log('processing data');
-    console.log(data);
+function displayProfilesErrors(error) {
+    profilesDiv = document.getElementById("profiles");
+    profilesDiv.innerHTML = "<p>Oops!</p>";
+    console.log(error);
 }
-function validateSignature(credentials_json)
+
+function findPeopleByIndustry(industry)
 {
-    var creds = {};
-    creds = credentials_json;
 
-//    $consumer_secret = 'YOUR_SECRET_KEY';
-    console.log('validating');
-// validate signature
-    for (var key in credentials_json)
-    {
-        console.log(key + ':' + credentials_json[key]);
-    }
-//    console.log(credentials_json.signature_version);
-    console.log(credentials_json.signature_order.constructor);
-    if (credentials_json.signature_version === "1") {
-        if (credentials_json.signature_order && credentials_json.signature_order instanceof Array) {
-            var base_string = '';
-            // build base string from values ordered by signature_order
-            for (var i in credentials_json.signature_order)
-            {
-                var key = credentials_json.signature_order[i];
-                console.log(key + '\t' + credentials_json[key]);
-                base_string += credentials_json[key];
-            }
-            console.log(base_string);
-            // hex encode an HMAC-SHA1 string
-            var hash = CryptoJS.HmacSHA1(base_string, Secret_Key);
-            console.log(hash);
-            var signature = CryptoJS.enc.Base64.stringify(hash);
-
-            console.log(signature);
-//            var signature = base64_encode(hash_hmac('sha1', base_string, Secret_Key, true));
-            // check if our signature matches the cookie's
-            if (signature == credentials_json.signature) {
-                console.log("signature validation succeeded");
-                return true;
-            } else {
-                console.log("signature validation failed");
-
-            }
-        } else {
-            console.log("signature order missing");
-        }
-    } else {
-        console.log("unknown cookie version");
-    }
-    return false;
 }
-function loadCookie() {
-
-    console.log('loading cookie');
-    var consumer_key = API_Key;
-    var cookie_name = "linkedin_oauth_" + consumer_key;
-    console.log(consumer_key + "\t" + cookie_name);
-    var credentials_json = getCookie(cookie_name); // where PHP stories cookies
-//    $credentials = json_decode($credentials_json);
-
-    console.log(credentials_json);
-
-
-    return JSON.parse(credentials_json);
-}
-
-function getCookie(c_name)
+function drawConnections(connections)
 {
-    var c_value = document.cookie;
-    var c_start = c_value.indexOf(" " + c_name + "=");
-    if (c_start == -1)
+    console.log(connections);
+    var members = connections.values; // The list of members you are connected to
+    var profiles = [];
+    var industries = {};
+    for (var i = 0, j = members.length; i < j; i++)
     {
-        c_start = c_value.indexOf(c_name + "=");
+//        try {
+        var member = members[i];
+//            console.log(member);
+        var userProfile = new UserProfile(member);
+//        console.log(userProfile);
+        var industry = userProfile.industry;
+        profiles[i] = userProfile;
+//            console.log(industry);
+        industries[industry] = (industries[industry]) ?
+                industries[industry] + 1 : 1;
+        /*      }
+         catch (err)
+         {
+         console.log(err);
+         continue;
+         }
+         */
     }
-    if (c_start == -1)
+//    console.log(profiles);
+    console.log(industries);
+    var sortedIndustries = sortObjectByValue(industries);
+    drawIndustryBarChart(sortedIndustries); //drawing.js
+}
+function sortObjectByValue(objects)
+{
+    var sorted = {};
+    var sortable = [];
+    for (var key in objects)
+        sortable.push([key, objects[key]])
+    sortable.sort(function(a, b) {
+        return b[1] - a[1]
+    });
+    console.log(sortable);
+    for (var i = 0, j = sortable.length; i < j; i++)
     {
-        c_value = null;
+//        console.log(sortable[i]);
+        sorted[sortable[i][0]] = sortable[i][1];
     }
-    else
-    {
-        c_start = c_value.indexOf("=", c_start) + 1;
-        var c_end = c_value.indexOf(";", c_start);
-        if (c_end == -1)
+    console.log(sorted);
+    return sorted;
+
+}
+/**
+ * 
+ * @param {UserProfile} userProfile
+ * @returns {undefined}
+ */
+
+function displayConnections(connections) {
+//  var connectionsDiv = document.getElementById("connections");
+
+    var members = connections.values; // The list of members you are connected to
+    for (var key in members) {
+        try {
+            var member = members[key];
+            $('#connections').append("<p>" +
+                    ((member.pictureUrl) ? "<img src='" + member.pictureUrl + "' alt='" + member.firstName + " " + member.lastName + "'/>" : "")
+                    + member.firstName + " " + member.lastName
+                    + ((member.industry) ? " works in the " + member.industry + " industry" : "")
+                    + "</p>");
+        } catch (err)
         {
-            c_end = c_value.length;
+            console.log(err);
+            continue;
         }
-        c_value = unescape(c_value.substring(c_start, c_end));
+    }
+}
+
+function displayConnectionsErrors(error) { /* do nothing */
+}
+
+function eventPeopleSearch()
+{
+    $('#keyword-search-button').click(function() {
+        console.log('people search ' + $('#keywords').val());
+        PeopleSearch($('#keywords').val());
+    });
+}
+function PeopleSearch(keywords) {
+// Call the PeopleSearch API with the viewer's keywords
+// Ask for 4 fields to be returned: first name, last name, distance, and Profile URL
+// Limit results to 10 and sort by distance
+// On success, call displayPeopleSearch(); On failure, do nothing.
+//    var keywords = document.getElementById('keywords').innerText;
+    console.log('People search for ' + keywords);
+    IN.API.PeopleSearch()
+            .fields("id", "firstName", "lastName", "pictureUrl", "distance", "siteStandardProfileRequest")
+            .params({"keywords": keywords, "count": 20, "sort": "distance"})
+            .result(displayPeopleSearch)
+            .error(function error(e) { /* do nothing */
+            }
+            );
+}
+
+function displayPeopleSearch(peopleSearch) {
+//    var div = document.getElementById("peopleSearchResults");
+    var div = "";
+    div = "<ul>";
+    // Loop through the people returned
+    var members = peopleSearch.people.values;
+    console.log(members);
+    for (var member in members) {
+
+// Look through result to make name and url.
+        var nameText = members[member].firstName + " " + members[member].lastName;
+        var url = (members[member].siteStandardProfileRequest) ? members[member].siteStandardProfileRequest.url : "";
+        // Turn the number into English
+        var distance = members[member].distance;
+        var distanceText = '';
+        switch (distance) {
+            case 0:  // The viewer
+                distanceText = "you!";
+                break;
+            case 1: // Within three degrees
+            case 2: // Falling through
+            case 3: // Keep falling!
+                distanceText = "a connection " + distance + " degrees away.";
+                break;
+            case 100: // Share a group, but nothing else
+                distanceText = "a fellow group member.";
+                break;
+            case -1: // Out of netowrk
+            default: // Hope we never get this!
+                distanceText = "far, far, away.";
+        }
+
+        div += "<li><a href=\"" + url + "\">" + nameText +
+                "</a> is " + distanceText + "</li>";
     }
 
-    return c_value;
+    div += "</ul>";
+    $('#people-search-results').empty().append(div);
 }
-
-
-function callLIAPI(parameters_input, api_input) {
-    var xhr = new easyXDM.Rpc({
-        remote: "http://api.linkedin.com/"
-    }, {
-        remote: {
-            request: {} // request is exposed by /cors/
-        }
-    });
-    xhr.request({
-        url: "v1/people/cors~?",
-        method: "POST",
-        data: {oauth2_access_token: ACCESS_TOKEN}
-    }, function(response) {
-        alert(response.status);
-//        alert(response.data);
-        console.log(response.data);
-    });
-    /*
-     var api_details = {
-     parameters: parameters_input,
-     api: api_input,
-     type: 'GET'
-     }
-     return $.ajax({
-     url: '_js/LI_proxy.php',
-     type: 'POST',
-     dataType: 'json',
-     data: api_details,
-     success: function(data, textStatus, xhr) {
-     console.log("LI Call Successful " + api_input);
-     },
-     error: function(xhr, textStatus, errorThrown) {
-     console.log("LI Call Failed " + api_input);
-     }
-     });*/
-}
-function onLinkedInAuth() {
-//   $.post('_js/LI_proxy.php');
-// location.href = "_js/LI_proxy.php";
-    /*
-     var credentials_json = loadCookie();
-     $.ajax({
-     url: '_js/LI_proxy.php',
-     type: 'POST',
-     //        dataType: 'json',
-     success: function(data, textStatus, xhr) {
-     console.log("validated");
-     console.log(data);
-     },
-     error: function(xhr, textStatus, errorThrown) {
-     console.log("error");
-     console.log(textStatus);
-     console.log(errorThrown);
-     }
-     });*/
-//    $.post('index.html');
-}
-var sampleSignature = {"signature_version": "1", "signature_method": "HMAC-SHA1", "signature_order": ["access_token", "member_id"], "access_token": "j66-0VBBeH_6LDbfUKWOhWttU-n5oyvpr55D", "signature": "eBPZJqu+E2zFNJyfp6hus+thueA=", "member_id": "aUOotmfvmP"};

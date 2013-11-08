@@ -7,17 +7,56 @@ and open the template in the editor.
     Created on : Oct 28, 2013, 5:22:27 PM
     Author     : Hassan
 */
-
+body{
+    width:1000px;
+}
 #people-search{
-    float:right;
+   
     width:45%;
 }
 #connections{
-    float:left;
-    width:45%;
+   
+    width:100%;
 }
 
 .timeLine {
   stroke: black; 
   stroke-width: 2px;
 }
+svg{
+    background:#ffe;
+    margin:0 0 20px 0;
+}
+
+#industry-viz .titles{
+    color: red;
+    fill: red;
+    font-size:1em;
+    font-weight:bold;
+}
+
+
+#industry-viz .tick text{
+    fill:#aaa;
+    font-size:.75em;
+    font-weight:normal;
+}
+
+#industry-viz .axis path{
+    fill:none;
+    stroke:#aaa;
+    stroke-width:1px;
+}
+
+#industry-viz line{
+    fill:none;
+    stroke:#ccc;
+    stroke-width:1px;
+}
+#industry-viz .grid{
+    fill:none;
+    stroke:#ccc;
+    /*stroke-dasharray:5,5;*/
+    stroke-width:1px;
+}
+
