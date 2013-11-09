@@ -12,11 +12,15 @@ and open the template in the editor.
         <link rel="stylesheet" type="text/css" href="_css/style.css" />
         <script type="text/javascript" src="_js/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="_js/d3.min.js"></script>	
+        <script type="text/javascript" src="_js/topojson.v1.min.js"></script>
         <script type="text/javascript" src="_js/drawIndustry.js"></script>
         <script type="text/javascript" src="_js/LI_API.js"></script>
         <script type="text/javascript" src="_js/LI_Profile.js"></script>
+        <script type="text/javascript" src="_js/datamaps.world.min.js"></script>
+        <script type="text/javascript" src="_js/LI_Profile.js"></script>
+        <script type="text/javascript" src="_js/mapping.js"></script>
 
-
+        <script src="http://d3js.org/topojson.v1.min.js"></script>
         <!--<script type="text/javascript" src="_js/oauth/oauth.js"></script>-->
         <!-- <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/sha1.js"></script>
         <script src="https://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/hmac-sha1.js"></script>
@@ -46,13 +50,17 @@ and open the template in the editor.
                     <ul></ul>
                 </div>
                 <div id="user-profile">
-                    
+
                 </div>
                 <!--                 <svg id="industry-viz-v" xmlns="http://www.w3.org/2000/svg" version="1.1"></svg> -->
             </div> 
+
+        </section>
+        <section id="map">
+            <div id="world-map"></div>
         </section>
 
-
+<!--
         <section>
             <div id="profiles"></div>
 
@@ -76,7 +84,7 @@ and open the template in the editor.
                 </div>
 
             </div>
-        </section>
+        </section>-->
         <!--<script type="in/login" data-onAuth="onLinkedInAuth"></script>-->
     </body>
 </html>

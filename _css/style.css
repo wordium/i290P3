@@ -35,7 +35,7 @@ body{
     stroke-width: 2px;
 }
 svg{
-    background:#ffe;
+    background:#fff;
     margin:0 0 20px 0;
 }
 
@@ -106,4 +106,16 @@ svg{
     width:200px;
     border:1px solid #fff;
     float:left;
+}
+
+/* MAPS */
+
+#world-map {
+    position: relative;
+    width: 1000px;
+    height: 500px;
+}
+
+#datamaps-hoverover{
+    /*postion:relative;*/
 }

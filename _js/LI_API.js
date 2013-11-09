@@ -125,6 +125,7 @@ function drawConnections(connections)
         profiles[i] = userProfile;
     }
     drawIndustryBarChart(profiles); //drawing.js
+    drawMap(profiles);
 }
 
 /**

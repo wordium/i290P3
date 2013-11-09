@@ -16,6 +16,9 @@ function UserProfile(/*JSON Object*/) {
         this.title = profile.headline;
         this.summary = profile.summary;
         this.location = (profile.location) ? profile.location.name : "";
+//        console.log(profile.location);
+        this.countryCode = (profile.location) ?
+                (profile.location.country.code + "").toUpperCase() : "";
         this.positions = [];
         if (profile.positions)
         {
