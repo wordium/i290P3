@@ -383,6 +383,13 @@ function drawHBars()
                 },
                 "id": function(d, i) {
                     return "industry-column-h-" + i;
+                },
+                "fill": function(d) {
+                    var dVal = 0;
+                    if (d < 256) {
+                        dVal = 256-d;
+                    }
+                    return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
                 }
             });
 }
@@ -437,7 +444,7 @@ function drawChartTitle()
             .text(title)
             .attr({
                 "x": chartW / 2,
-                "y": chartTitleH + 5,
+                "y": chartTitleH + 15,
                 "text-anchor": "middle",
                 "class": "chart-title"
             });
