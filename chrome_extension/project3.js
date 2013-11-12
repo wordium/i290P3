@@ -1,5 +1,5 @@
 chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
-    
+    //console.log(msg);
     //getting position history
     for (j in msg.data[0].positionHistory) {
         profile = [];
@@ -46,6 +46,7 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
         });
         
         profilePHP = JSON.stringify(profile);
+        console.log(profilePHP);
         educationSendToPHP(profilePHP);
     };
 
@@ -60,7 +61,8 @@ function educationSendToPHP (object) {
         data:"action=educationinfo"+"&profile="+object
     })
         .done(function(data){
-            console.log(data);
+            $('#div1').append(data + "<br />");
+            //console.log(data);
             //updateCounts(data);
 
         })
@@ -77,7 +79,8 @@ function positionSendToPHP (object) {
         data:"action=positioninfo"+"&profile="+object
     })
         .done(function(data){
-            console.log(data);
+            $('#div1').append(data + "<br />");
+            //console.log(data);
             //updateCounts(data);
 
         })
