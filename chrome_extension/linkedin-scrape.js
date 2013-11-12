@@ -5,8 +5,8 @@ var profile = [];
 $(document).ready(function(){
 	//getting the username
 	var url = window.location.pathname;
-	var username = url.match("([^/]+$)");
-    username = username[1];
+	var username = url.match("(/[a-z]*/)(.*)");
+    username = username[2];
 
 	//populating the current and past positions
 	$("#profile-experience").find($(".position")).each(function(index) {
@@ -147,7 +147,7 @@ function populateEducationObject(object) {
 	
 	//End Date might be problematic. I'm not sure what the html looks like if a user's most current education
 	//has 'Current' as it's end date.
-
+	console.log($.trim(object.find($(".org.summary")).text()));
 	//pushing data to educations object
 	educations.push({
 	title : object.find($(".degree")).text(), //Degree

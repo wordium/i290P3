@@ -17,19 +17,25 @@
 /* general styling */
 body{
     width:1200px;
-    background: url("../_img/texture_grain_200x200_v2.png");
+    background: #333;
     font-family: "Sintony", sans-serif;
     color: #23659c;
 }
 
 svg{
-    background: rgba(256,256,256,0.5);
+    background: rgba(256,256,256,0.4);
     margin:0 0 20px 0;
+<<<<<<< HEAD
     /*border: 8px solid #23659c;*/
     /*border-radius: 5px;*/
+=======
+
+>>>>>>> 939650bc1e1e3766afbd11eb7d644c2f8d7c3d8b
 
 }
+
 .main-section{
+<<<<<<< HEAD
     border: 2px solid #23659c;
     /*margin:6px;*/
     margin: 0 0 10px 10px;
@@ -37,6 +43,11 @@ svg{
 
     border-radius: 0px;
     display: inline-block;
+=======
+  border: 8px solid #23659c;
+  border-radius: 5px;
+
+>>>>>>> 939650bc1e1e3766afbd11eb7d644c2f8d7c3d8b
 }
 section{
     display:inline-block;

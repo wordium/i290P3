@@ -45,6 +45,9 @@ function onLinkedInAuth()
     var connections = getConnections("me");
 
     getCurrentUserHistory();
+
+    var other = "cppham";
+    getOtherUserHistory(other);
 }
 
 function getCurrentUserHistory()
@@ -55,12 +58,23 @@ function getCurrentUserHistory()
                 var profile = profiles.values[0];
                 var myUrl = profile.publicProfileUrl;
                 //getting the linkedin username from the public profile url
-                username = myUrl.match("([^/]+$)");
-                username = username[1];
-                getProfileFromSQL(username); //goto getProfileFromSQL function to use the object
+                username = myUrl.match("(.com/[a-z]*/)(.*)");
+                username = username[2];
+                getCurrentProfileFromSQL(username); //goto getProfileFromSQL function to use the object
                 
             });    
 }
+
+function getOtherUserHistory(otherUser)
+{
+    getCurrentProfileFromSQL(otherUser); //goto getProfileFromSQL function to use the object
+    //var myUrl = profile.publicProfileUrl;
+    
+    //username = myUrl.match("(.com/[a-z]*/)(.*)");
+    //username = username[2];
+                
+}
+
 function drawCurrentUserProfile()
 {
     IN.API.Profile("me")
@@ -252,7 +266,7 @@ function displayPeopleSearch(peopleSearch) {
 }
 
 //making a call to get information from database
-function getProfileFromSQL (object) {
+function getCurrentProfileFromSQL (object) {
     $.ajax({
         type:"post",
         url:"phpScript.php",
@@ -262,6 +276,23 @@ function getProfileFromSQL (object) {
             var parsedData = JSON.parse(data);
             var userHistory = creatingProfileObject(parsedData);
             console.log(userHistory);
+        })
+        .fail(function(data){
+            console.log("fail");
+        });
+}
+
+//making a call to get information from database
+function getOtherProfileFromSQL (object) {
+    $.ajax({
+        type:"post",
+        url:"phpScript.php",
+        data:"action=getprofile"+"&username="+object
+    })
+        .done(function(data){
+            var parsedData = JSON.parse(data);
+            var otherUserHistory = creatingProfileObject(parsedData);
+            console.log(otherUserHistory);
         })
         .fail(function(data){
             console.log("fail");

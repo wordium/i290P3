@@ -25,7 +25,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                 //if (tabId == tab.id) {
                     //Send Mesage
                 chrome.tabs.sendMessage(tab.id, {
-                        //"data": "whatever_data"
                     "data": JSON.parse(request.objectProfileKey) //to be sent to project3.js. for one db table
                     //"data": request.objectProfileKey //to be sent to project3.js                    
                     });
