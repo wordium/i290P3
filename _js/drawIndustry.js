@@ -89,7 +89,7 @@ function drawIndustryBarChart(profileData)
     console.log($(IND_VIZ_ID).parent());
 
     w = parseInt($(IND_VIZ_ID).css('width'));
-    h = parseInt($(IND_VIZ_ID).css('height'));
+    h = parseInt($(IND_VIZ_ID).parent().css('height'));
 //    console.log(w + "\t" + h);
     top = 0;
     left = 0;
@@ -242,27 +242,7 @@ function prepareScale(orientation)
 
     calcColumnWidth();
     calcBarHeight();
-    /*
-     switch (orientation)
-     {
-     case 'h':
-     
-     if (barH < minBarH)
-     {
-     h = (minBarH + xGap) * colCount + 2 * yPadding + chartTitleH;
-     //                $(IND_VIZ_ID).css('height', h);
-     calcBarHeight();
-     }
-     break;
-     case 'v':
-     if (colW < minColW)
-     {
-     w = (minColW + xGap) * colCount + 2 * xPaddding + infoW;
-     calcColumnWidth();
-     }
-     }
-     */
-
+  
     chartH = h - 2 * yPadding - chartTitleH;
     chartW = w - 2 * xPadding - infoW;
     chartTop = h - yPadding;
