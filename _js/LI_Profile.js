@@ -10,7 +10,7 @@ function getProfileFromSQL (object) {
             // When page loads, POST bizId & reviewList, and fetch data
     $.ajax({
         type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        url:"phpScript.php",
         data:"action=getprofile"+"&profileID="+object
     })
         .done(function(data){
@@ -60,34 +60,6 @@ function getProfileVariables(data) {
     });
 
     console.log(profile);
-    //create an array where each element is a string consisting of reviewID, food count, service count separated with an &
-    /*var info = data.split(";");
-    info.pop();
-    // console.log(info);
-    for (var i = 0; i < info.length;i++) {
-        //create an array where each element is the LinkedIn profile elements
-        var history = info[i].split("&");
-        // console.log(review);
-        //saving the reviewID, food count, and service count into variables
-        var reviewID = review[0].slice(3);
-        var foodCount = review[1].slice(5);
-        var serviceCount = review[2].slice(8);
-        var atmosphereCount = review[3].slice(11);
-        var priceCount = review[4].slice(6);
-        // console.log(reviewID);
-        // console.log(foodCount);
-        // console.log(serviceCount);
-        // console.log(atmosphereCount);
-        // console.log(priceCount);
-
-        // update the reviewList array of review objects with the proper tagged attributes
-        updateReviewList(reviewID, foodCount, serviceCount, atmosphereCount, priceCount)
-
-        $('#food'+reviewID).text("Food "+foodCount);
-        $('#service'+reviewID).text("Service "+serviceCount);
-        $('#atmosphere'+reviewID).text("Atmosphere "+atmosphereCount);
-        $('#price'+reviewID).text("Price "+priceCount);
-    }*/
 }
 
 
