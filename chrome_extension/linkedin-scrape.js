@@ -45,14 +45,11 @@ $(document).ready(function(){
 	profile.push({
 		id: profileID, 
 		name: $(".given-name").text() + " " + $(".family-name").text(),
-		username: username,
+		profileUsername: username,
 		picURL: $("#profile-picture").find($("img")).attr("src"),
 		positionHistory: positions,
 		educationHistory: educations 
 	});
-	//console.log(positions);
-	//console.log(educations);
-	//console.log(profile);	
 
     alert("Profile added");
 	//this sends the object positions to background.js

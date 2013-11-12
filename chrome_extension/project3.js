@@ -1,21 +1,12 @@
 chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
-    //console.log(msg.data);
-    // profilePHP = msg.data; for linked db tables
     
-    //for multi db table
-    /*
-    picURL = msg.data[0].picURL;
-    name = msg.data[0].name;
-    profileID = msg.data[0].id;
-    */
-    console.log(msg.data[0].username);
     //getting position history
     for (j in msg.data[0].positionHistory) {
         profile = [];
         profile.push({
             picURL : msg.data[0].picURL,
             name : msg.data[0].name,
-            username : msg.data[0].username,
+            username : msg.data[0].profileUsername,
             profileID : msg.data[0].id,
             title : msg.data[0].positionHistory[j].title,
             subTitle : "",
@@ -39,7 +30,7 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
         profile.push({
             picURL : msg.data[0].picURL,
             name : msg.data[0].name,
-            username : msg.data[0].username,
+            username : msg.data[0].profileUsername,
             profileID : msg.data[0].id,
             title : msg.data[0].educationHistory[j].title,
             subTitle : msg.data[0].educationHistory[j].subTitle,
@@ -59,48 +50,13 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
     };
 
 
-    
-
-/* for linked db tables
-    //console.log(picURL + name + profileID);
-    // When page loads, POST bizId & reviewList, and fetch data
-    $.ajax({
-        type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
-        data:"action=profileinfo"+"&profile="+profilePHP
-    })
-        .done(function(data){
-            console.log("success");
-            console.log(data);
-            //updateCounts(data);
-
-        })
-        .fail(function(data){
-            console.log("fail");
-        });
-*/
-    /*for (i in msg.data) {
-            picURL = msg.data.picURL;            
-            $("#div1").append("<p><img src='" + msg.data[i].picURL + "'></p>");
-            $("#div1").append("<p>" + msg.data[i].name + "</p>");
-            $("#div1").append("<p>" + msg.data[i].id + "</p>");
-            for (j in msg.data[i].educationHistory) {
-            //console.log(msg.data[i].positionHistory);
-              console.log(msg.data[i].educationHistory[j].company.name);
-              $("#div1").append("<p>" + msg.data[i].educationHistory[j].company.name + "</p>");
-              $("#div1").append("<p>" + msg.data[i].educationHistory[j].title + "</p>");
-              //$("#div1").append("<p>" + msg.data[i].positionHistory) + "</p>");
-            }
-        }
-        */
-
 });
 
 function educationSendToPHP (object) {
         // When page loads, POST bizId & reviewList, and fetch data
     $.ajax({
         type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpSaveToDB.php",
         data:"action=educationinfo"+"&profile="+object
     })
         .done(function(data){
@@ -117,7 +73,7 @@ function positionSendToPHP (object) {
         // When page loads, POST bizId & reviewList, and fetch data
     $.ajax({
         type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpSaveToDB.php",
         data:"action=positioninfo"+"&profile="+object
     })
         .done(function(data){
