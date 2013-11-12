@@ -2,19 +2,20 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
     //console.log(msg.data);
     // profilePHP = msg.data; for linked db tables
     
-    //for one db table
+    //for multi db table
     /*
     picURL = msg.data[0].picURL;
     name = msg.data[0].name;
     profileID = msg.data[0].id;
     */
-
+    console.log(msg.data[0].username);
     //getting position history
     for (j in msg.data[0].positionHistory) {
         profile = [];
         profile.push({
             picURL : msg.data[0].picURL,
             name : msg.data[0].name,
+            username : msg.data[0].username,
             profileID : msg.data[0].id,
             title : msg.data[0].positionHistory[j].title,
             subTitle : "",
@@ -38,6 +39,7 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
         profile.push({
             picURL : msg.data[0].picURL,
             name : msg.data[0].name,
+            username : msg.data[0].username,
             profileID : msg.data[0].id,
             title : msg.data[0].educationHistory[j].title,
             subTitle : msg.data[0].educationHistory[j].subTitle,
