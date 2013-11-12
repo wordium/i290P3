@@ -71,6 +71,7 @@ section{
 #preview{
     width: 348px;
     height: 978px;
+    overflow-y: auto;
 }
 #industry-viz{
     float:left;

@@ -80,9 +80,9 @@ function drawCurrentUserProfile()
     IN.API.Profile("me")
             .fields(PROFILE_FIELDS)
             .result(function(profiles) {
-                var profile = profiles.values[0];
-                var member = new UserProfile(profile);
-                $('#my-profile').empty().append(member.formatHTML());
+               
+                var profile = new UserProfile(profiles.values[0]);
+                $('#my-profile').empty().append(profile.formatHTML());
                 drawTimeLine(profile, '#my-timeline');
             });
 }

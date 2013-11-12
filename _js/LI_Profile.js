@@ -6,63 +6,63 @@ $(document).ready(function() {
     //getProfileFromSQL(id)
 });
 /*
-function getProfileFromSQL(object) {
-    // When page loads, POST bizId & reviewList, and fetch data
-    $.ajax({
-        type:"post",
-        url:"phpScript.php",
-        data:"action=getprofile"+"&profileID="+object
-    })
-            .done(function(data) {
-                var parsedData = JSON.parse(data);
-                //console.log(parsedData);
-                //console.log(parsedData["name"]);
-                getProfileVariables(parsedData);
-
-            })
-            .fail(function(data) {
-                console.log("fail");
-            });
-}
-
-function getProfileVariables(data) {
-
-    for (var i = 0; i < data.length; i++) {
-        //console.log(data[i].positionCompanyName);
-        //pushing data to the positions object
-        workHistory.push({
-            isPositionOrEducation: data[i].isPositionOrEducation,
-            title: data[i].positionTitle,
-            subTitle: data[i].positionSubTitle,
-            company: {
-                name: data[i].positionCompanyName,
-                location: data[i].positionCompanyLocation,
-                industry: data[i].positionCompanyIndustry,
-            },
-            startDate: {
-                year: data[i].positionStartDateYear,
-                month: data[i].positionStartDateMonth,
-            },
-            endDate: {
-                isCurrent: data[i].positionEndDateIsCurrent,
-                year: data[i].positionEndDateYear,
-                month: data[i].positionEndDateMonth,
-            },
-            summary: data[i].positionSummary,
-        });
-    }
-    ;
-
-    profile.push({
-        id: data[0].profileID,
-        name: data[0].name,
-        picURL: data[0].picURL,
-        history: workHistory
-    });
-
-    console.log(profile);
-}
-*/
+ function getProfileFromSQL(object) {
+ // When page loads, POST bizId & reviewList, and fetch data
+ $.ajax({
+ type:"post",
+ url:"phpScript.php",
+ data:"action=getprofile"+"&profileID="+object
+ })
+ .done(function(data) {
+ var parsedData = JSON.parse(data);
+ //console.log(parsedData);
+ //console.log(parsedData["name"]);
+ getProfileVariables(parsedData);
+ 
+ })
+ .fail(function(data) {
+ console.log("fail");
+ });
+ }
+ 
+ function getProfileVariables(data) {
+ 
+ for (var i = 0; i < data.length; i++) {
+ //console.log(data[i].positionCompanyName);
+ //pushing data to the positions object
+ workHistory.push({
+ isPositionOrEducation: data[i].isPositionOrEducation,
+ title: data[i].positionTitle,
+ subTitle: data[i].positionSubTitle,
+ company: {
+ name: data[i].positionCompanyName,
+ location: data[i].positionCompanyLocation,
+ industry: data[i].positionCompanyIndustry,
+ },
+ startDate: {
+ year: data[i].positionStartDateYear,
+ month: data[i].positionStartDateMonth,
+ },
+ endDate: {
+ isCurrent: data[i].positionEndDateIsCurrent,
+ year: data[i].positionEndDateYear,
+ month: data[i].positionEndDateMonth,
+ },
+ summary: data[i].positionSummary,
+ });
+ }
+ ;
+ 
+ profile.push({
+ id: data[0].profileID,
+ name: data[0].name,
+ picURL: data[0].picURL,
+ history: workHistory
+ });
+ 
+ console.log(profile);
+ }
+ */
 
 function UserProfile(/*JSON Object*/) {
     if (arguments.length === 1)
@@ -87,10 +87,11 @@ function UserProfile(/*JSON Object*/) {
                 var pos = profile.positions.values;
                 for (var i = 0, j = pos.length; i < j; i++)
                 {
-                    this.positions[i] = new Position(pos[i]);
-
-                    if (this.positions[i].isCurrent)
-                        this.currentCompany = this.positions[i].company;
+                    var position = new Position(pos[i]);
+//                    this.positions[i] = new Position(pos[i]);
+                    this.positions.push(position);
+                    if (position.isCurrent)
+                        this.currentCompany = position.company;
                 }
 
             }
@@ -161,12 +162,13 @@ function Position(/*JSON Object*/)
         this.subTitle = ""; /* or field of study*/
         this.startYear = (position.startDate) ? position.startDate.year : 0;
         this.startMonth = (position.startDate) ? position.startDate.month : 0;
+
         this.startDate = (position.startDate) ? new Date(position.startDate.year,
-                position.startDate.month, 1) : "";
+                ((position.startDate.month) ? position.startDate.month : 1), 1) : "";
         this.endDate = (position.isCurrent)
                 ? new Date() : new Date(position.endDate.year,
-                position.endDate.month, 1);
-                
+                ((position.endDate.month) ? position.endDate.month : 1), 1);
+
         this.isCurrent = position.isCurrent;
         this.summary = position.summary;
         this.logo = "";
