@@ -3,6 +3,11 @@ var educations = [];
 var profile = [];
 
 $(document).ready(function(){
+	//getting the username
+	var url = window.location.pathname;
+	var username = url.match("([^/]+$)");
+    username = username[1];
+
 	//populating the current and past positions
 	$("#profile-experience").find($(".position")).each(function(index) {
 		if ($(this).find($(".dtstamp")).text()) {
@@ -36,10 +41,11 @@ $(document).ready(function(){
             profileID = nodeStringRE[1];
         });
 
-	//console.log(thing);
+
 	profile.push({
 		id: profileID, 
 		name: $(".given-name").text() + " " + $(".family-name").text(),
+		username: username,
 		picURL: $("#profile-picture").find($("img")).attr("src"),
 		positionHistory: positions,
 		educationHistory: educations 

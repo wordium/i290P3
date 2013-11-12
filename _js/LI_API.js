@@ -29,7 +29,10 @@ function onLinkedInAuth()
 
     var connections = getConnections("me");
 
-
+    //currentUser = IN.User.getMemberUrl();
+    IN.API.Profile("me")
+    .fields("publicProfileUrl", "firstName")
+    .result(displayProfiles);
 
 }
 function getProfiles(users)
@@ -104,9 +107,16 @@ function displayProfiles(member) {
     return member;
 }
 function displayProfilesErrors(error) {
-    profilesDiv = document.getElementById("profiles");
-    profilesDiv.innerHTML = "<p>Oops!</p>";
-    console.log(error);
+//    console.log(profiles);
+    member = profiles.values[0];
+    var myUrl = member.publicProfileUrl;
+    //console.log(myUrl);
+    //getting the linkedin username from the public profile url
+    username = myUrl.match("([^/]+$)");
+    username = username[1];
+    console.log(username);
+    console.log(window.location.pathname);
+    getProfileFromSQL(username);
 }
 
 function findPeopleByIndustry(industry)
@@ -218,4 +228,61 @@ function displayPeopleSearch(peopleSearch) {
 
     div += "</ul>";
     $('#people-search-results').empty().append(div);
+}
+
+//making a call to get information from database
+function getProfileFromSQL (object) {
+    $.ajax({
+        type:"post",
+        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        data:"action=getprofile"+"&profileID="+object
+    })
+        .done(function(data){
+            var parsedData = JSON.parse(data);
+            //console.log(parsedData);
+            //console.log(parsedData["name"]);
+            creatingProfileObject(parsedData);
+
+        })
+        .fail(function(data){
+            console.log("fail");
+        });
+}
+
+//creating the profile object
+function creatingProfileObject(data) {
+
+    for (var i = 0; i < data.length; i++) {
+        //console.log(data[i].positionCompanyName);
+        //pushing data to the positions object
+        workHistory.push({
+            isPositionOrEducation : data[i].isPositionOrEducation,
+            title : data[i].positionTitle,
+            subTitle : data[i].positionSubTitle,
+            company : {
+                    name : data[i].positionCompanyName,
+                    location : data[i].positionCompanyLocation,
+                    industry : data[i].positionCompanyIndustry,
+                },
+            startDate : {
+                    year : data[i].positionStartDateYear,
+                    month : data[i].positionStartDateMonth,
+                },
+            endDate : {
+                    isCurrent : data[i].positionEndDateIsCurrent,
+                    year : data[i].positionEndDateYear,
+                    month : data[i].positionEndDateMonth,
+                },
+            summary : data[i].positionSummary,
+        });
+    };
+
+    profile.push({
+        id: data[0].profileID, 
+        name: data[0].name,
+        picURL: data[0].picURL,
+        history: workHistory
+    });
+
+    console.log(profile);
 }
