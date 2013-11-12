@@ -36,7 +36,7 @@ function onLinkedInAuth()
 //    var profiles = getProfiles("me");
     console.log(IN.User.getMemberId());
     var connections = getConnections("me");
-<<<<<<< HEAD
+
 }
 function drawCurrentUserProfile()
 {
@@ -47,17 +47,6 @@ function drawCurrentUserProfile()
                 var member = new UserProfile(profile);
                 $('#my-profile').empty().append(member.formatHTML());
             });
-=======
-
-    //currentUser = IN.User.getMemberUrl();
-    IN.API.Profile("me")
-    .fields("publicProfileUrl", "firstName")
-    .result(displayProfiles);
-
-<<<<<<< HEAD
->>>>>>> 2a506b0b315eec0c4c0d1618227f5c4aa87cfae8
-=======
->>>>>>> 2a506b0b315eec0c4c0d1618227f5c4aa87cfae8
 }
 function getProfiles(users)
 {
