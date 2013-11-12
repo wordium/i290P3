@@ -17,16 +17,19 @@ $(document).ready(function()
 
 var IND_VIZ_ID = '#industry-viz';
 var IND_VIZ_ID_V = '#industry-viz-v';
-var IND_PREVIEW_ID = '#industry-member-preview ul';
+var IND_PREVIEW_ID = '#member-preview ul';
 var USER_IND_PROFILE_CLASS = '.user-industry-profile';
-var IND_PROFILE_DIV_ID = '#user-profile';
+var IND_PROFILE_DIV_ID = '#remote-profile';
 var IND_MAX_DRAW = 10;
 var indChart;
-var valueSet;
+var profiles = [];
+var profilesByIndustry = {};
+var printedProfiles = {};
 var valueTitles = [];
 var values = [];
 var drawValues = [];
 var drawTitleValues = [];
+var datasetByInustry = {};
 var maxValue = 0;
 var minValue = 0;
 var w;
@@ -65,14 +68,9 @@ var barH;
 var minColW = 20;
 var minBarH = 30;
 var colCount = 0;
-var profiles = [];
 
-var popup = $("#member-popup");
 
-//    draw = draw;
-//    prepareData = prepareData;
-//    drawAxis = drawAxis;
-//    drawAxis = drawAxis;
+var POPUP_ID = "#member-popup";
 
 
 function init()
@@ -80,18 +78,19 @@ function init()
 }
 function drawIndustryBarChart(profileData)
 {
-
-    profiles = profileData;
-    valueSet = loadIndustryData();
-    valueTitles = [];
-    values = [];
     maxValue = 0;
     minValue = 0;
+    profiles = profileData;
+    loadIndustryData();
+    prepareData();
+
+    valueTitles = [];
+    values = [];
+
     console.log($(IND_VIZ_ID).parent());
 
     w = parseInt($(IND_VIZ_ID).css('width'));
     h = parseInt($(IND_VIZ_ID).parent().css('height'));
-//    console.log(w + "\t" + h);
     top = 0;
     left = 0;
     vizId = IND_VIZ_ID;
@@ -99,67 +98,147 @@ function drawIndustryBarChart(profileData)
     IND_MAX_DRAW = 10;
     title = "Top 10 Industry Connections";
     draw('h');
-    /*vizId = IND_VIZ_ID_V;
-     viz = d3.select(vizId);
-     draw('v');
-     */
 }
 
+/*
+ function drawConnections(connections)
+ {
+ //    console.log(connections);
+ 
+ var industries = {};
+ for (var i = 0, j = profiles.length; i < j; i++)
+ {
+ 
+ var userProfile = profiles[i];
+ var industry = userProfile.industry;
+ industries[industry] = (industries[industry]) ?
+ industries[industry] + 1 : 1;
+ 
+ }
+ console.log(industries);
+ var sortedIndustries = sortObjectByValue(industries);
+ }*/
 
-function drawConnections(connections)
-{
-//    console.log(connections);
+/*
+ function sortObjectByValue(objects)
+ {
+ var sorted = {};
+ var sortable = [];
+ for (var key in objects)
+ sortable.push([key, objects[key]])
+ sortable.sort(function(a, b) {
+ return b[1] - a[1]
+ });
+ for (var i = 0, j = sortable.length; i < j; i++)
+ {
+ //        console.log(sortable[i]);
+ sorted[sortable[i][0]] = sortable[i][1];
+ }
+ return sorted;
+ 
+ }
+ */
 
-    var industries = {};
-    for (var i = 0, j = profiles.length; i < j; i++)
-    {
 
-        var userProfile = profiles[i];
-        var industry = userProfile.industry;
-        industries[industry] = (industries[industry]) ?
-                industries[industry] + 1 : 1;
-
-    }
-    console.log(industries);
-    var sortedIndustries = sortObjectByValue(industries);
-}
-function sortObjectByValue(objects)
-{
-    var sorted = {};
-    var sortable = [];
-    for (var key in objects)
-        sortable.push([key, objects[key]])
-    sortable.sort(function(a, b) {
-        return b[1] - a[1]
-    });
-    for (var i = 0, j = sortable.length; i < j; i++)
-    {
-//        console.log(sortable[i]);
-        sorted[sortable[i][0]] = sortable[i][1];
-    }
-    return sorted;
-
-}
 
 function loadIndustryData() {
     var industries = {};
     for (var i = 0, j = profiles.length; i < j; i++)
     {
-
         var userProfile = profiles[i];
         var industry = userProfile.industry;
-        industries[industry] = (industries[industry]) ?
-                industries[industry] + 1 : 1;
-
+        if (typeof (industry) !== 'undefined') {
+            if (industries[industry])
+                industries[industry].push(userProfile);
+            else
+                industries[industry] = [userProfile];
+        }
     }
-    console.log(industries);
-    return sortObjectByValue(industries);
+
+
+//    console.log(industries);
+    profilesByIndustry = sortIndustrySet(industries);
+    console.log(profilesByIndustry);
+
+}
+
+function sortIndustrySet(oldset)
+{
+    var sorted = {};
+    var sortable = [];
+    for (var key in oldset)
+        sortable.push([key, oldset[key].length]);
+
+    console.log(sortable);
+    sortable.sort(function(a, b) {
+        return b[1] - a[1];
+    });
+    for (var i = 0, j = sortable.length; i < j; i++)
+    {
+        //        console.log(sortable[i]);
+        var key = sortable[i][0];
+        sorted[key] = oldset[key];
+    }
+
+    return sorted;
+}
+
+function prepareData()
+{
+    var i = 0;
+    for (var key in profilesByIndustry)
+    {
+        values[i] = profilesByIndustry[key].length;
+        valueTitles[i] = key;
+        i++;
+    }
+    colCount = (IND_MAX_DRAW > 0 && IND_MAX_DRAW < values.length) ?
+            IND_MAX_DRAW : values.length;
+
+
+    for (var i = 0; i < colCount - 1; i++)
+    {
+        var title = valueTitles[i];
+        drawValues[i] = values[i];
+        drawTitleValues[i] = title;
+        printedProfiles[title] = profilesByIndustry[title];
+    }
+    drawTitleValues[colCount - 1] = 'Others';
+    drawValues[colCount - 1] = 0;
+    printedProfiles["Others"] = [];
+    for (var i = colCount - 1; i < values.length; i++)
+    {
+        drawValues[colCount - 1] += values[i];
+        var prof = profilesByIndustry[valueTitles[i]];
+//        console.log(prof);
+        for (var k = 0, l = prof.length; k < l; k++)
+            printedProfiles["Others"].push(prof[k]);
+    }
+
+    printedProfiles = sortIndustrySet(printedProfiles);
+
+    var i = 0;
+    for (var key in printedProfiles)
+    {
+        drawValues[i] = printedProfiles[key].length;
+        drawTitleValues[i] = key;
+        i++;
+    }
+
+    var max = 0;
+    var min = 100000000;
+    for (var i = 0, j = drawValues.length; i < j; i++)
+    {
+        max = (drawValues[i] > max) ? drawValues[i] : max;
+        min = (drawValues[i] < min) ? drawValues[i] : min;
+    }
+
+    minValue = min;
+    maxValue = max;
+//    console.log("min=" + min + "\tmax=" + max);
 }
 function draw(orientation)
 {
-
-
-    prepareData();
     prepareScale(orientation);
     viz.attr("width", w)
             .attr("height", h);
@@ -182,58 +261,6 @@ function draw(orientation)
             drawVBaseLine()
             break;
     }
-}
-function prepareData()
-{
-    var i = 0;
-    for (var key in valueSet)
-    {
-        values[i] = valueSet[key];
-        valueTitles[i] = key;
-        i++;
-    }
-    colCount = (IND_MAX_DRAW > 0 && IND_MAX_DRAW < values.length) ?
-            IND_MAX_DRAW : values.length;
-
-
-    for (var i = 0; i < colCount - 1; i++)
-    {
-        drawValues[i] = values[i];
-        drawTitleValues[i] = valueTitles[i];
-    }
-    drawTitleValues[colCount - 1] = 'Others';
-    drawValues[colCount - 1] = 0;
-    for (var i = colCount - 1; i < values.length; i++)
-    {
-        drawValues[colCount - 1] += values[i];
-    }
-
-    var tempSet = {};
-    for (var i = 0; i < colCount; i++)
-    {
-        tempSet[drawTitleValues[i]] = drawValues[i];
-    }
-    tempSet = sortObjectByValue(tempSet);
-
-    var i = 0;
-    for (var key in tempSet)
-    {
-        drawValues[i] = tempSet[key];
-        drawTitleValues[i] = key;
-        i++;
-    }
-
-    var max = 0;
-    for (var key in drawValues)
-        max = (drawValues[key] > max) ?
-                drawValues[key] : max;
-    maxValue = max;
-    var min = maxValue;
-    for (var key in drawValues)
-        min = (drawValues[key] < min) ?
-                drawValues[key] : min;
-    minValue = min;
-
 }
 
 function prepareScale(orientation)
@@ -285,11 +312,16 @@ function drawYAxis()
                     .tickSize(-w + 2 * xPadding, 0, 0)
                     .tickFormat(""));
 }
-
 function drawXAxis()
 {
+
+
     xAxisTop = Math.ceil(maxValue / 10) * 10;
     xAxisBottom = 0;
+
+    console.log("chartW=" + chartW);
+    console.log("maxValue=" + maxValue);
+    console.log("xAxisTop=" + xAxisTop);
     xAxisScale = d3.scale.linear().domain([xAxisBottom, xAxisTop]).range([0, chartW]);
     xAxis = d3.svg.axis().scale(xAxisScale).orient("bottom").ticks(ticks);
     xScale = d3.scale.linear().domain([xAxisBottom, xAxisTop]).range([0, chartW]);
@@ -311,6 +343,7 @@ function drawXAxis()
 }
 function drawVBars()
 {
+
     viz.selectAll("rect")
             .data(drawValues)
             .enter()
@@ -335,9 +368,9 @@ function drawVBars()
                 }
             });
 }
-
 function drawHBars()
 {
+    console.log(drawValues);
     viz.selectAll("rect")
             .data(drawValues)
             .enter()
@@ -345,6 +378,7 @@ function drawHBars()
             .attr({
                 "height": barH,
                 "width": function(d, i) {
+//                    console.log(d + "\t" + xScale(d));
                     return xScale(d);
                 },
                 "x": function(d, i) {
@@ -483,7 +517,7 @@ function hBarEvents() {
                 var self = $(this);
                 var industry = "" + self.attr("desc");
                 console.log(industry);
-                displayPreview(industry);
+                displayPreview(printedProfiles[industry], industry);
             });
 }
 
@@ -506,19 +540,17 @@ function profilePreviewEvents()
                 var id = self.attr('id');
                 id = id.replace('preview-profile-', '');
                 formatMemberPopup(id);
-                popup.css({
-                    "left": parseInt(self.position().left),
-                    "top": self.position().top - 60})
+                $(POPUP_ID).css({
+                    "left": parseInt(self.position().left - 60),
+                    "top": self.position().top - 100})
                         .show();
-
-
 
             })
             .on("mouseleave", function() {
                 var self = $(this);
                 self.animate({"opacity": 1}, 100);
                 self.attr('class', self.attr('class').replace(' user-industry-profile-hover', ""));
-                popup.hide();
+                $(POPUP_ID).hide();
             })
             .on("click", function() {
                 var self = $(this);
@@ -529,8 +561,6 @@ function profilePreviewEvents()
 
                 for (var i = 0, j = profiles.length; i < j; i++)
                 {
-//                    console.log(profiles[i].id + "\t" + profiles[i].industry);
-//                    if(profiles[i].id === id || $.inArray(profiles[i].industry, drawTitleValues) === -1)
                     profile = (profiles[i].id === id) ? profiles[i] : profile;
                 }
                 console.log(profile);
@@ -539,30 +569,18 @@ function profilePreviewEvents()
             });
 }
 
-function displayPreview(industry)
+function displayPreview(profs, title)
 {
-    $(IND_PREVIEW_ID).parent().css('height', h + 'px');
     $(IND_PREVIEW_ID).empty();
-    var industryProfiles = [];
-//    console.log(industry);
-    for (var i = 0, j = profiles.length; i < j; i++)
+    var head = "<label class='preview-header'>" + title + "-" + profs.length + "</label>";
+    $(IND_PREVIEW_ID).append(head);
+    for (var i = 0, j = profs.length; i < j; i++)
     {
-        var profile = new UserProfile();
-        profile = profiles[i];
-//        console.log(profile);
-        if ($.inArray(profile.industry, drawTitleValues) === -1)
-            console.log("Profile " + profile.name + "\tOTHER");
-        else
-            console.log("Profile " + profile.name + "\t"+ profile.industry);
-        if (profile.industry === industry || $.inArray(profile.industry, drawTitleValues) === -1)
-        {
-            industryProfiles.push(profile);
-            var html = $(formatPreviewProfileHTML(profile));
-            $(IND_PREVIEW_ID).append(html);
-        }
+        var profile = profs[i];
+//                console.log(profile);
+        $(IND_PREVIEW_ID).append(formatPreviewProfileHTML(profile));
     }
     profilePreviewEvents();
-
 }
 /**
  * 
@@ -571,11 +589,8 @@ function displayPreview(industry)
  */
 function displayProfile(profile)
 {
-//    var html = $(formatProfileHTML(profile));
-//    var html = $(profile.formatHTML);
     $(IND_PROFILE_DIV_ID).empty();
     var output = profile.formatHTML();
-    console.log(output);
     $(IND_PROFILE_DIV_ID).append(output);
 }
 
@@ -598,29 +613,6 @@ function formatPreviewProfileHTML(profile)
 
 }
 
-/**
- * 
- * @param {UserProfile} profile
- * @returns {String}
- */
-/*
- function formatProfileHTML(profile)
- {
- var hstr = "<div id='profile-" + profile.id
- + "' class='user-profile'>"
- + "<a href='" + profile.profileUrl + "' target='_blank'>"
- + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
- + "<h1>" + profile.name
- + "</h1></a>"
- + "<h2>" + profile.title + "</h2>"
- + ((profile.positions[0]) ? "<h2>" + profile.positions[0].company + "</h2>" : "")
- + ((profile.summary) ? "<h1>Summary:</h1><p>" + profile.summary + "</p>" : "")
- + "</div>";
- return hstr;
- 
- }
- */
-
 
 function formatMemberPopup(id)
 {
@@ -628,14 +620,22 @@ function formatMemberPopup(id)
 
     for (var i = 0, j = profiles.length; i < j; i++)
     {
-        profile = (profiles[i].id === id) ? profiles[i] : profile;
+        if (profiles[i].id === id) {
+            profile = profiles[i];
+            console.log('profile found');
+            console.log(profile);
+            break;
+        }
+
     }
 
-    var msg = "<h1>" + profile.name + "</h1>"
-            + "<p>" + profile.title + "</p>"
-            + "<p>" + profile.currentCompany + "<p>";
 
-    popup.empty().append(msg);
+    var msg = "<p><strong>" + profile.name + "</strong>"
+            + "<br>" + profile.title
+            + "<br>" + profile.currentCompany + "<p>";
+    console.log(msg);
+    $(POPUP_ID).empty();
+    $(POPUP_ID).append(msg);
 
 
 

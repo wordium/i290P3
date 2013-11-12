@@ -10,6 +10,7 @@ var mapScale;
 var mapMax = 0;
 var MAX_RADIUS = 50;
 var MIN_RADIUS = 5;
+var mapProfiles = {};
 var defaultOptions = {
     scope: 'world', //currently supports 'usa' and 'world', however with custom map data you can specify your own
 //    setProjection: d3.geo.mercator(), //returns a d3 path and projection functions
@@ -97,10 +98,12 @@ function prepareMapData(profiles)
         {
             dataset[countryCode].count++;
             dataset[countryCode].profiles.push(profile);
+            mapProfiles[countryCode].push(profile);
         }
         else
         {
             dataset[countryCode] = {'count': 1, 'profiles': [profile]};
+            mapProfiles[countryCode] = [profile];
             count++;
         }
     }
@@ -136,12 +139,13 @@ function prepareMapData(profiles)
 
 
     console.log(dataArray);
+
     return dataArray;
 }
 function drawBubbles()
 {
 
-    console.log('drawing bubles');
+//    console.log('drawing bubles');
 
     map.bubbles(mapData, {
         popupTemplate: function(geography, data) {
@@ -149,6 +153,20 @@ function drawBubbles()
                 '<br/>Count: ' + data.count + ' members',
                 '</div>'].join('');
         }
+    });
+
+    $('.datamaps-bubble').on('click', function() {
+        console.log('bubble clicked');
+        var self = $(this);
+        var data = JSON.parse(self.attr('data-info'));
+        console.log(data);
+
+        var country = data.countryCode;
+        console.log(country);
+        displayPreview(data.profiles, data.countryName);
+//        var profiles = mapProfiles[country].profiles;
+
+
     });
 }
 

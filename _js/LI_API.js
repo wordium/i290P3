@@ -52,7 +52,7 @@ function getCurrentUserHistory()
     IN.API.Profile("me")
             .fields(PROFILE_FIELDS)
             .result(function(profiles) {
-                profile = profiles.values[0];
+                var profile = profiles.values[0];
                 var myUrl = profile.publicProfileUrl;
                 //getting the linkedin username from the public profile url
                 username = myUrl.match("([^/]+$)");
@@ -66,9 +66,10 @@ function drawCurrentUserProfile()
     IN.API.Profile("me")
             .fields(PROFILE_FIELDS)
             .result(function(profiles) {
-                profile = profiles.values[0];
+                var profile = profiles.values[0];
                 var member = new UserProfile(profile);
                 $('#my-profile').empty().append(member.formatHTML());
+                drawTimeLine(profile, '#my-timeline');
             });
 }
 function getProfiles(users)

@@ -166,6 +166,7 @@ function Position(/*JSON Object*/)
         this.endDate = (position.isCurrent)
                 ? new Date() : new Date(position.endDate.year,
                 position.endDate.month, 1);
+                
         this.isCurrent = position.isCurrent;
         this.summary = position.summary;
         this.logo = "";
