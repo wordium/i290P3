@@ -46,9 +46,9 @@ $(document).ready(function(){
 	});
 	//console.log(positions);
 	//console.log(educations);
-	//console.log(profile);
-	alert("Profile added");
-		
+	//console.log(profile);	
+
+    alert("Profile added");
 	//this sends the object positions to background.js
 	chrome.runtime.sendMessage({objectProfileKey: JSON.stringify(profile)}, function(response) {
 		//console.log(response.farewell);
