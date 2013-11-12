@@ -1,11 +1,11 @@
-var workHistory = [];
-var profile = [];
+//var workHistory = [];
+//var profile = [];
 
 $(document).ready(function() {
     var id = "12503649";
-    getProfileFromSQL(id)
+    //getProfileFromSQL(id)
 });
-
+/*
 function getProfileFromSQL(object) {
     // When page loads, POST bizId & reviewList, and fetch data
     $.ajax({
@@ -62,7 +62,7 @@ function getProfileVariables(data) {
 
     console.log(profile);
 }
-
+*/
 
 function UserProfile(/*JSON Object*/) {
     if (arguments.length === 1)

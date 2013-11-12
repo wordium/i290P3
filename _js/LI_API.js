@@ -3,11 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+var userDataTimeline = [];
+var workHistory = [];
+
 var PROFILE_FIELDS = ["id", "first-name", 'last-name', 'formatted-name',
     'headline', 'location', 'industry', 'summary',
     'num-connections', 'specialties', 'picture-url',
     'public-profile-url', 'three-past-positions', 'email-address',
     'publications', 'skills', 'educations:(degree)', 'positions'];
+
+
+
 $(document).ready(function()
 {
     init();
@@ -37,6 +44,22 @@ function onLinkedInAuth()
     console.log(IN.User.getMemberId());
     var connections = getConnections("me");
 
+    getCurrentUserHistory();
+}
+
+function getCurrentUserHistory()
+{
+    IN.API.Profile("me")
+            .fields(PROFILE_FIELDS)
+            .result(function(profiles) {
+                profile = profiles.values[0];
+                var myUrl = profile.publicProfileUrl;
+                //getting the linkedin username from the public profile url
+                username = myUrl.match("([^/]+$)");
+                username = username[1];
+                getProfileFromSQL(username); //goto getProfileFromSQL function to use the object
+                
+            });    
 }
 function drawCurrentUserProfile()
 {
@@ -109,27 +132,11 @@ function getDeferredConnections(user)
 }
 function displayProfiles(member) {
 //    console.log(profiles);
-//    member = profiles.values[0];
-    /*
-     $('#profiles').append("<p id=\"" + member.id + "\">Hello " + member.firstName
-     + " " + member.lastName + "</p>");
-     $('#profiles').append("<img src='" + member.pictureUrl + "' alt='"
-     + member.firstName + " " + member.lastName + "'/>");
-     */
-//    console.log(member);
-    return member;
 }
 function displayProfilesErrors(error) {
-//    console.log(profiles);
-    member = profiles.values[0];
-    var myUrl = member.publicProfileUrl;
-    //console.log(myUrl);
-    //getting the linkedin username from the public profile url
-    username = myUrl.match("([^/]+$)");
-    username = username[1];
-    console.log(username);
-    console.log(window.location.pathname);
-    getProfileFromSQL(username);
+ //profilesDiv = document.getElementById("profiles");
+  //profilesDiv.innerHTML = "<p>Oops!</p>";
+  console.log(error);
 }
 
 function findPeopleByIndustry(industry)
@@ -248,14 +255,12 @@ function getProfileFromSQL (object) {
     $.ajax({
         type:"post",
         url:"phpScript.php",
-        data:"action=getprofile"+"&profileID="+object
+        data:"action=getprofile"+"&username="+object
     })
         .done(function(data){
             var parsedData = JSON.parse(data);
-            //console.log(parsedData);
-            //console.log(parsedData["name"]);
-            creatingProfileObject(parsedData);
-
+            var userHistory = creatingProfileObject(parsedData);
+            console.log(userHistory);
         })
         .fail(function(data){
             console.log("fail");
@@ -264,7 +269,9 @@ function getProfileFromSQL (object) {
 
 //creating the profile object
 function creatingProfileObject(data) {
-
+    //var workHistory = [];
+    //var profile = [];
+    //workHistory1.push({hello: "Mooo"});
     for (var i = 0; i < data.length; i++) {
         //console.log(data[i].positionCompanyName);
         //pushing data to the positions object
@@ -288,14 +295,19 @@ function creatingProfileObject(data) {
                 },
             summary : data[i].positionSummary,
         });
-    };
-
-    profile.push({
+    }
+    userDataTimeline.push({
         id: data[0].profileID, 
         name: data[0].name,
+        username: data[0].username,
         picURL: data[0].picURL,
         history: workHistory
     });
-
-    console.log(profile);
+    //console.log(userDataTimeline);
+    return userDataTimeline;
+    
 }
+
+
+
+
