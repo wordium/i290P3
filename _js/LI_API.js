@@ -234,7 +234,7 @@ function displayPeopleSearch(peopleSearch) {
 function getProfileFromSQL (object) {
     $.ajax({
         type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        url:"phpScript.php",
         data:"action=getprofile"+"&profileID="+object
     })
         .done(function(data){
