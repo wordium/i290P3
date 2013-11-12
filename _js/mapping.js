@@ -115,10 +115,9 @@ function prepareMapData(profiles)
     var dataArray = [];
     for (var key in dataset)
     {
-        console.log(key);
-        
+//        console.log(key);
         var country = countries[key];
-        console.log(mapScale(dataset[key].count));
+//        console.log(mapScale(dataset[key].count));
         if (country) {
 //        console.log(country);
             var obj = {country: country['code'],

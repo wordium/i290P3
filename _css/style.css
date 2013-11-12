@@ -25,10 +25,17 @@ body{
 svg{
     background: rgba(256,256,256,0.5);
     margin:0 0 20px 0;
-    border: 8px solid #23659c;
+        /*border: 8px solid #23659c;*/
+    /*border-radius: 5px;*/
+
+}
+.main-section{
+        border: 8px solid #23659c;
     border-radius: 5px;
 }
-
+section{
+    display:inline-block;
+}
 
 /* Connections chart */
 .chart-title {

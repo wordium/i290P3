@@ -67,6 +67,8 @@ var minBarH = 30;
 var colCount = 0;
 var profiles = [];
 
+var popup = $("#member-popup");
+
 //    draw = draw;
 //    prepareData = prepareData;
 //    drawAxis = drawAxis;
@@ -75,7 +77,6 @@ var profiles = [];
 
 function init()
 {
-
 }
 function drawIndustryBarChart(profileData)
 {
@@ -242,7 +243,7 @@ function prepareScale(orientation)
 
     calcColumnWidth();
     calcBarHeight();
-  
+
     chartH = h - 2 * yPadding - chartTitleH;
     chartW = w - 2 * xPadding - infoW;
     chartTop = h - yPadding;
@@ -367,7 +368,7 @@ function drawHBars()
                 "fill": function(d) {
                     var dVal = 0;
                     if (d < 256) {
-                        dVal = 256-d;
+                        dVal = 256 - d;
                     }
                     return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
                 }
@@ -466,8 +467,6 @@ function hBarEvents() {
             .unbind("mouseleave")
             .unbind("click");
 
-//    $("#visualization .year-bar").unbind("click");
-// hover event interaction
     $(IND_VIZ_ID + " rect")
             .on("mouseenter", function()
             {
@@ -483,8 +482,7 @@ function hBarEvents() {
             .on("click", function() {
                 var self = $(this);
                 var industry = "" + self.attr("desc");
-
-
+                console.log(industry);
                 displayPreview(industry);
             });
 }
@@ -505,22 +503,33 @@ function profilePreviewEvents()
                 var self = $(this);
                 self.animate({"opacity": .8}, 100);
                 self.attr('class', self.attr('class') + ' user-industry-profile-hover');
+                var id = self.attr('id');
+                id = id.replace('preview-profile-', '');
+                formatMemberPopup(id);
+                popup.css({
+                    "left": parseInt(self.position().left),
+                    "top": self.position().top - 60})
+                        .show();
+
+
+
             })
             .on("mouseleave", function() {
                 var self = $(this);
                 self.animate({"opacity": 1}, 100);
                 self.attr('class', self.attr('class').replace(' user-industry-profile-hover', ""));
+                popup.hide();
             })
             .on("click", function() {
                 var self = $(this);
                 var id = self.attr('id');
                 id = id.replace('preview-profile-', '');
-                console.log(id);
+//                console.log(id);
                 var profile;
 
                 for (var i = 0, j = profiles.length; i < j; i++)
                 {
-                    console.log(profiles[i].id + "\t" + profiles[i].industry);
+//                    console.log(profiles[i].id + "\t" + profiles[i].industry);
 //                    if(profiles[i].id === id || $.inArray(profiles[i].industry, drawTitleValues) === -1)
                     profile = (profiles[i].id === id) ? profiles[i] : profile;
                 }
@@ -541,6 +550,10 @@ function displayPreview(industry)
         var profile = new UserProfile();
         profile = profiles[i];
 //        console.log(profile);
+        if ($.inArray(profile.industry, drawTitleValues) === -1)
+            console.log("Profile " + profile.name + "\tOTHER");
+        else
+            console.log("Profile " + profile.name + "\t"+ profile.industry);
         if (profile.industry === industry || $.inArray(profile.industry, drawTitleValues) === -1)
         {
             industryProfiles.push(profile);
@@ -551,11 +564,19 @@ function displayPreview(industry)
     profilePreviewEvents();
 
 }
-
+/**
+ * 
+ * @param {UserProfile} profile
+ * @returns {undefined}
+ */
 function displayProfile(profile)
 {
-    var html = $(formatProfileHTML(profile));
-    $(IND_PROFILE_DIV_ID).empty().append(html);
+//    var html = $(formatProfileHTML(profile));
+//    var html = $(profile.formatHTML);
+    $(IND_PROFILE_DIV_ID).empty();
+    var output = profile.formatHTML();
+    console.log(output);
+    $(IND_PROFILE_DIV_ID).append(output);
 }
 
 /**
@@ -569,8 +590,8 @@ function formatPreviewProfileHTML(profile)
             + "' class='user-industry-profile'>"
 //            + "<a href='" + profile.profileUrl + "' target='_blank'>"
             + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
-            + "<h1>" + profile.name
-            + "</h1>"
+//            + "<h1>" + profile.name
+//            + "</h1>"
 //            +"</a>"
             + "</li>";
     return hstr;
@@ -582,18 +603,40 @@ function formatPreviewProfileHTML(profile)
  * @param {UserProfile} profile
  * @returns {String}
  */
-function formatProfileHTML(profile)
+/*
+ function formatProfileHTML(profile)
+ {
+ var hstr = "<div id='profile-" + profile.id
+ + "' class='user-profile'>"
+ + "<a href='" + profile.profileUrl + "' target='_blank'>"
+ + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
+ + "<h1>" + profile.name
+ + "</h1></a>"
+ + "<h2>" + profile.title + "</h2>"
+ + ((profile.positions[0]) ? "<h2>" + profile.positions[0].company + "</h2>" : "")
+ + ((profile.summary) ? "<h1>Summary:</h1><p>" + profile.summary + "</p>" : "")
+ + "</div>";
+ return hstr;
+ 
+ }
+ */
+
+
+function formatMemberPopup(id)
 {
-    var hstr = "<div id='profile-" + profile.id
-            + "' class='user-profile'>"
-            + "<a href='" + profile.profileUrl + "' target='_blank'>"
-            + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
-            + "<h1>" + profile.name
-            + "</h1></a>"
-            + "<h2>" + profile.title + "</h2>"
-            + ((profile.positions[0]) ? "<h2>" + profile.positions[0].company + "</h2>" : "")
-            + ((profile.summary) ? "<h1>Summary:</h1><p>" + profile.summary + "</p>" : "")
-            + "</div>";
-    return hstr;
+    var profile = new UserProfile();
+
+    for (var i = 0, j = profiles.length; i < j; i++)
+    {
+        profile = (profiles[i].id === id) ? profiles[i] : profile;
+    }
+
+    var msg = "<h1>" + profile.name + "</h1>"
+            + "<p>" + profile.title + "</p>"
+            + "<p>" + profile.currentCompany + "<p>";
+
+    popup.empty().append(msg);
+
+
 
 }

@@ -13,9 +13,15 @@ $(document).ready(function()
     init();
 });
 var LI_Athenticated = false;
+var currentUser;
 var COUNT_LIMIT = 0;
 
 function init() {
+    $.getScript("http://platform.linkedin.com/in.js?async=true", function success() {
+        IN.init({
+            onLoad: "onLinkedInLoad"
+        });
+    });
     eventPeopleSearch();
 }
 function onLinkedInLoad() {
@@ -25,12 +31,21 @@ function onLinkedInLoad() {
 function onLinkedInAuth()
 {
     LI_Athenticated = true;
+    currentUser = IN.User.getMemberId();
+    drawCurrentUserProfile();
 //    var profiles = getProfiles("me");
-
+    console.log(IN.User.getMemberId());
     var connections = getConnections("me");
-
-
-
+}
+function drawCurrentUserProfile()
+{
+    IN.API.Profile("me")
+            .fields(PROFILE_FIELDS)
+            .result(function(profiles) {
+                profile = profiles.values[0];
+                var member = new UserProfile(profile);
+                $('#my-profile').empty().append(member.formatHTML());
+            });
 }
 function getProfiles(users)
 {

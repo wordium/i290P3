@@ -1,28 +1,28 @@
 var workHistory = [];
 var profile = [];
 
- $(document).ready(function(){
+$(document).ready(function() {
     var id = "12503649";
     getProfileFromSQL(id)
- });
+});
 
-function getProfileFromSQL (object) {
-            // When page loads, POST bizId & reviewList, and fetch data
+function getProfileFromSQL(object) {
+    // When page loads, POST bizId & reviewList, and fetch data
     $.ajax({
-        type:"post",
-        url:"http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
-        data:"action=getprofile"+"&profileID="+object
+        type: "post",
+        url: "http://people.ischool.berkeley.edu/~jenton/iolab_p3/phpScript.php",
+        data: "action=getprofile" + "&profileID=" + object
     })
-        .done(function(data){
-            var parsedData = JSON.parse(data);
-            //console.log(parsedData);
-            //console.log(parsedData["name"]);
-            getProfileVariables(parsedData);
+            .done(function(data) {
+                var parsedData = JSON.parse(data);
+                //console.log(parsedData);
+                //console.log(parsedData["name"]);
+                getProfileVariables(parsedData);
 
-        })
-        .fail(function(data){
-            console.log("fail");
-        });
+            })
+            .fail(function(data) {
+                console.log("fail");
+            });
 }
 
 function getProfileVariables(data) {
@@ -31,29 +31,30 @@ function getProfileVariables(data) {
         //console.log(data[i].positionCompanyName);
         //pushing data to the positions object
         workHistory.push({
-            isPositionOrEducation : data[i].isPositionOrEducation,
-            title : data[i].positionTitle,
-            subTitle : data[i].positionSubTitle,
-            company : {
-                    name : data[i].positionCompanyName,
-                    location : data[i].positionCompanyLocation,
-                    industry : data[i].positionCompanyIndustry,
-                },
-            startDate : {
-                    year : data[i].positionStartDateYear,
-                    month : data[i].positionStartDateMonth,
-                },
-            endDate : {
-                    isCurrent : data[i].positionEndDateIsCurrent,
-                    year : data[i].positionEndDateYear,
-                    month : data[i].positionEndDateMonth,
-                },
-            summary : data[i].positionSummary,
+            isPositionOrEducation: data[i].isPositionOrEducation,
+            title: data[i].positionTitle,
+            subTitle: data[i].positionSubTitle,
+            company: {
+                name: data[i].positionCompanyName,
+                location: data[i].positionCompanyLocation,
+                industry: data[i].positionCompanyIndustry,
+            },
+            startDate: {
+                year: data[i].positionStartDateYear,
+                month: data[i].positionStartDateMonth,
+            },
+            endDate: {
+                isCurrent: data[i].positionEndDateIsCurrent,
+                year: data[i].positionEndDateYear,
+                month: data[i].positionEndDateMonth,
+            },
+            summary: data[i].positionSummary,
         });
-    };
+    }
+    ;
 
     profile.push({
-        id: data[0].profileID, 
+        id: data[0].profileID,
         name: data[0].name,
         picURL: data[0].picURL,
         history: workHistory
@@ -62,32 +63,32 @@ function getProfileVariables(data) {
     console.log(profile);
     //create an array where each element is a string consisting of reviewID, food count, service count separated with an &
     /*var info = data.split(";");
-    info.pop();
-    // console.log(info);
-    for (var i = 0; i < info.length;i++) {
-        //create an array where each element is the LinkedIn profile elements
-        var history = info[i].split("&");
-        // console.log(review);
-        //saving the reviewID, food count, and service count into variables
-        var reviewID = review[0].slice(3);
-        var foodCount = review[1].slice(5);
-        var serviceCount = review[2].slice(8);
-        var atmosphereCount = review[3].slice(11);
-        var priceCount = review[4].slice(6);
-        // console.log(reviewID);
-        // console.log(foodCount);
-        // console.log(serviceCount);
-        // console.log(atmosphereCount);
-        // console.log(priceCount);
-
-        // update the reviewList array of review objects with the proper tagged attributes
-        updateReviewList(reviewID, foodCount, serviceCount, atmosphereCount, priceCount)
-
-        $('#food'+reviewID).text("Food "+foodCount);
-        $('#service'+reviewID).text("Service "+serviceCount);
-        $('#atmosphere'+reviewID).text("Atmosphere "+atmosphereCount);
-        $('#price'+reviewID).text("Price "+priceCount);
-    }*/
+     info.pop();
+     // console.log(info);
+     for (var i = 0; i < info.length;i++) {
+     //create an array where each element is the LinkedIn profile elements
+     var history = info[i].split("&");
+     // console.log(review);
+     //saving the reviewID, food count, and service count into variables
+     var reviewID = review[0].slice(3);
+     var foodCount = review[1].slice(5);
+     var serviceCount = review[2].slice(8);
+     var atmosphereCount = review[3].slice(11);
+     var priceCount = review[4].slice(6);
+     // console.log(reviewID);
+     // console.log(foodCount);
+     // console.log(serviceCount);
+     // console.log(atmosphereCount);
+     // console.log(priceCount);
+     
+     // update the reviewList array of review objects with the proper tagged attributes
+     updateReviewList(reviewID, foodCount, serviceCount, atmosphereCount, priceCount)
+     
+     $('#food'+reviewID).text("Food "+foodCount);
+     $('#service'+reviewID).text("Service "+serviceCount);
+     $('#atmosphere'+reviewID).text("Atmosphere "+atmosphereCount);
+     $('#price'+reviewID).text("Price "+priceCount);
+     }*/
 }
 
 
@@ -113,7 +114,13 @@ function UserProfile(/*JSON Object*/) {
             {
                 var pos = profile.positions.values;
                 for (var i = 0, j = pos.length; i < j; i++)
+                {
                     this.positions[i] = new Position(pos[i]);
+
+                    if (this.positions[i].isCurrent)
+                        this.currentCompany = this.positions[i].company;
+                }
+
             }
         }
         this.educations = [];
@@ -137,16 +144,46 @@ function UserProfile(/*JSON Object*/) {
         this.industry = "";
         this.pictureUrl = "";
         this.profileUrl = "";
+        this.currentCompany = "";
     }
+
+//    this.formatHTML = formatHTML;
+}
+
+
+UserProfile.prototype.formatHTML = function()
+{
+    var str = "<div id='profile-" + this.id
+            + "' class='user-profile'>"
+            + "<a href='" + this.profileUrl + "' target='_blank'>"
+            + "<img src='" + this.pictureUrl + "' alt='" + this.name + "'/>"
+            + "<p>" + this.name
+            + "</p></a>"
+            + "<p>" + this.title + "</p>";
+    if (this.positions && this.positions.length > 0)
+        str += "<p>"
+                + ((this.positions[0].company) ? this.positions[0].company : "") + "</p>";
+    str += ((this.summary) ? "<strong>Summary:</strong><p>" + this.summary + "</p>" : "")
+            + "</div>";
+
+    return str;
 }
 
 function Position(/*JSON Object*/)
 {
+    this.id = 0;
+    this.company = ""; /*or institute*/
+    this.industry = "";
+    this.title = ""; /*or degree*/
+    this.subTitle = ""; /* or field of study*/
+    this.summary = "";
+    this.logo = "";
     if (arguments.length === 1)
     {
         var position = arguments[0];
         this.id = position.id;
-        this.company = (position.company.name) ? position.company.name : position.degree; /*or institute*/
+        this.company = (position.company.name) ? position.company.name :
+                ((position.degree) ? position.degree : ""); /*or institute*/
         this.industry = position.company.industry;
         this.title = position.title; /*or degree*/
         this.subTitle = ""; /* or field of study*/
@@ -157,22 +194,18 @@ function Position(/*JSON Object*/)
         this.endDate = (position.isCurrent)
                 ? new Date() : new Date(position.endDate.year,
                 position.endDate.month, 1);
+        this.isCurrent = position.isCurrent;
         this.summary = position.summary;
         this.logo = "";
     }
     else
     {
-        this.id = 0;
-        this.company = ""; /*or institute*/
-        this.industry = "";
-        this.title = ""; /*or degree*/
-        this.subTitle = ""; /* or field of study*/
+
         this.startYear = 0;
         this.startMonth = 0;
         this.startDate = new Date();
         this.endDate = new Date();
-        this.summary = "";
-        this.logo = "";
+
     }
 }
 
@@ -181,3 +214,4 @@ function formatDate(dateString)
     //return date object from string
     return new Date();
 }
+
