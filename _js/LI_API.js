@@ -55,8 +55,8 @@ function getCurrentUserHistory()
                 profile = profiles.values[0];
                 var myUrl = profile.publicProfileUrl;
                 //getting the linkedin username from the public profile url
-                username = myUrl.match("([^/]+$)");
-                username = username[1];
+                username = myUrl.match("(.com/[a-z]*/)(.*)");
+                username = username[2];
                 getProfileFromSQL(username); //goto getProfileFromSQL function to use the object
                 
             });    
