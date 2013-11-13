@@ -419,9 +419,9 @@ function drawChartTitle()
     viz.append("text")
             .text(title)
             .attr({
-                "x": chartW / 2,
+                "x": 20,
                 "y": chartTitleH + 15,
-                "text-anchor": "middle",
+                "text-anchor": "left",
                 "class": "chart-title"
             });
 
