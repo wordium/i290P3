@@ -8,11 +8,11 @@
             "background.js"
         ]
     },
-    "content_scripts" : [{
+/*    "content_scripts" : [{
     "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
     "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/pub/*"],
     "exclude_matches": ["http://www.linkedin.com/profile/*"]
-    }],
+    }],*/
     "web_accessible_resources": [
         "project3.js",
         "index.html",
@@ -25,6 +25,7 @@
         "activeTab",
         "storage",
         "http://www.linkedin.com/in/*",
+        "http://www.linkedin.com/pub/*",
         "https://platform.linked.com/in.js",
         "http://people.ischool.berkeley.edu/~jenton/*"
     ],

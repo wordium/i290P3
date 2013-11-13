@@ -18,11 +18,12 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
             endDateIsCurrent : msg.data[0].positionHistory[j].isPositionCurrent,
             endDateYear : msg.data[0].positionHistory[j].endDateYear,
             endDateMonth : msg.data[0].positionHistory[j].endDateMonth,
-            summary : msg.data[0].positionHistory[j].summary  
+            summary : msg.data[0].positionHistory[j].summary 
         });
         
         profilePHP = JSON.stringify(profile);
         positionSendToPHP(profilePHP);
+        //console.log(profilePHP);
     };
     //getting education history
     for (j in msg.data[0].educationHistory) {
@@ -32,7 +33,7 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
             name : msg.data[0].name,
             username : msg.data[0].profileUsername,
             profileID : msg.data[0].id,
-            title : msg.data[0].educationHistory[j].title,
+            title : encodeURI(msg.data[0].educationHistory[j].title),
             subTitle : msg.data[0].educationHistory[j].subTitle,
             companyName : msg.data[0].educationHistory[j].companyName,
             companyIndustry : msg.data[0].educationHistory[j].companyIndustry,
@@ -46,7 +47,6 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
         });
         
         profilePHP = JSON.stringify(profile);
-        console.log(profilePHP);
         educationSendToPHP(profilePHP);
     };
 
