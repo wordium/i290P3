@@ -9,15 +9,12 @@ $(document).ready(function(){
     username = username[2];
 
 	//populating the current and past positions
-	$("#background-experience").find($("div[class='editable-item section-item']")).each(function(index) {
-		//console.log($(this).find($("a[name='title']")).text());
-		//console.log($(this).find($("h4 a")).text());
-		populatePositionsObject($(this));
-		/*if ($(this).find($(".a[name='title']").text()) {
+	$("#profile-experience").find($(".position")).each(function(index) {
+		if ($(this).find($(".dtstamp")).text()) {
 			populatePositionsObjectCurrent($(this));	
 		} else {	
 			populatePositionsObject($(this));
-		};*/
+		};
 	});
 	
 	//populating the education experience
@@ -97,34 +94,10 @@ function populatePositionsObjectCurrent(object) {
 
 function populatePositionsObject(object) {
 	//this function is for populating data from past positions
+	
 	//splitting the dates into month and year
-	
-	//console.log(object.find($("a[name='title']")).text());
-	//console.log($.trim(object.find($("strong a")).text()));
-	
-	//console.log(object);
-
-	//getting start date end date
-	timeDate = object.find($("time")).toArray();
-	for (i =0 ; i < timeDate.length; i++) {
-		if (timeDate[i].innerText === " - Present"){
-			isCurrent = "1";
-			endMonth = "";
-			endYear = "";			
-		} else {
-			if(i == 0){
-				var startDateInt = timeDate[i].attributes.value.split("-");	
-			}
-			else if (i == 1){
-				var endDateInt = timeDate[i].attributes.value.split("-");			
-			}
-		}
-	};
-	
-	console.log(startDateInt[0]);
-	console.log(startDateInt[1]);
-	
-	
+	var startDateInt = object.find($(".dtstart")).attr("title").split("-");
+	var endDateInt = object.find($(".dtend")).attr("title").split("-");
 
 	//getting the industry
 	var orgStats = (object.find($(".orgstats")).text().split(";"));
@@ -134,10 +107,10 @@ function populatePositionsObject(object) {
 
 	//pushing data to the positions object
 	positions.push({
-	title : object.find($("a[name='title']")).text(),
+	title : object.find($(".title")).text(),
 	subTitle : "",
 	company : {
-			name : $.trim(object.find($("strong")).text()),
+			name : $.trim(object.find($(".org.summary")).text()),
 			location : object.find($(".location")).text(),
 			industry : orgStats[orgStats.length-1], //industry always seems to be the last element in the orgstats array
 		},
@@ -174,7 +147,7 @@ function populateEducationObject(object) {
 	
 	//End Date might be problematic. I'm not sure what the html looks like if a user's most current education
 	//has 'Current' as it's end date.
-	//console.log($.trim(object.find($(".org.summary")).text()));
+	console.log($.trim(object.find($(".org.summary")).text()));
 	//pushing data to educations object
 	educations.push({
 	title : object.find($(".degree")).text(), //Degree

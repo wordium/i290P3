@@ -9,7 +9,7 @@
         ]
     },
     "content_scripts" : [{
-    "js": ["jquery.2.0.3.js", "linkedin-scrape2.js"],
+    "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
     "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/pub/*"],
     "exclude_matches": ["http://www.linkedin.com/profile/*"]
     },

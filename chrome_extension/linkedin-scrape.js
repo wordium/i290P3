@@ -4,23 +4,28 @@ var profile = [];
 
 $(document).ready(function(){
 	//getting the username
-	var url = window.location.pathname;
-	var username = url.match("(/[a-z]*/)(.*)");
-    username = username[2];
 
-	//populating the current and past positions
-	$("#profile-experience").find($(".position")).each(function(index) {
-		if ($(this).find($(".dtstamp")).text()) {
-			populatePositionsObjectCurrent($(this));	
-		} else {	
+	var continueScrape = confirm("Do you want to scrape this user's profile data?");
+
+	if (continueScrape == true) {    
+		var url = window.location.pathname;
+		var username = url.match("(/[a-z]*/)(.*)");
+	    username = username[2];
+
+		//populating the current and past positions
+		$("#background-experience").find($("div[class='editable-item section-item']")).each(function(index) {
 			populatePositionsObject($(this));
-		};
-	});
-	
-	//populating the education experience
-	$("#profile-education").find($(".position")).each(function(index) {
-		populateEducationObject($(this));		
-	});
+		});
+		//console.log(positions);
+
+		/*
+		//populating the education experience
+		$("#background-education").find($("div[class='editable-item section-item']")).each(function(index) {
+			populateEducationObject($(this));		
+		});
+		//console.log(educations);
+		*/
+
 		//finding the ID in the linkedin profile page. It's located in a script tag, near newTrkInfo
 		//credit to http://stackoverflow.com/questions/926580/find-text-string-using-jquery
 	   $('*', 'script')
@@ -41,132 +46,81 @@ $(document).ready(function(){
             profileID = nodeStringRE[1];
         });
 
-
-	profile.push({
-		id: profileID, 
-		name: $(".given-name").text() + " " + $(".family-name").text(),
-		profileUsername: username,
-		picURL: $("#profile-picture").find($("img")).attr("src"),
-		positionHistory: positions,
-		educationHistory: educations 
-	});
-
-    alert("Profile added");
-	//this sends the object positions to background.js
-	chrome.runtime.sendMessage({objectProfileKey: JSON.stringify(profile)}, function(response) {
-		//console.log(response.farewell);
-	});
+		profile.push({
+			id: profileID, 
+			name: $(".full-name").text(),
+			profileUsername: username,
+			picURL: $(".profile-picture").find($("img")).attr("src"),
+			positionHistory: positions,
+			educationHistory: educations 
+		});
+		//console.log(profile);
+		//this sends the object positions to background.js
+		chrome.runtime.sendMessage({objectProfileKey: JSON.stringify(profile)}, function(response) {
+		});
+	} else {
+		return;
+	}
 });
-		
-function populatePositionsObjectCurrent(object) {
-	//this function is for populating data from the current position
-	var startDateInt = object.find($(".dtstart")).attr("title").split("-");
-
-	//getting the industry
-	var orgStats = (object.find($(".orgstats")).text().split(";"));
-	for (i in orgStats){
-		orgStats[i] = $.trim(orgStats[i]);
-	};
-
-	//pushing data to the positions object
-	positions.push({
-	title : object.find($(".title")).text(),
-	subTitle : "",
-	company : {
-			name : $.trim(object.find($(".org.summary")).text()),
-			location : object.find($(".location")).text(),
-			industry : orgStats[orgStats.length-1], //industry always seems to be the last element in the orgstats array
-		},
-	startDate : {
-			year : startDateInt[0],
-			month : startDateInt[1],
-		},
-	endDate : {
-			isCurrent : "1",
-			year : "",
-			month : "",
-		},
-	summary : $.trim(object.find($(".description")).text()),
-
-	});
-
-}
 
 function populatePositionsObject(object) {
 	//this function is for populating data from past positions
-	
 	//splitting the dates into month and year
-	var startDateInt = object.find($(".dtstart")).attr("title").split("-");
-	var endDateInt = object.find($(".dtend")).attr("title").split("-");
 
-	//getting the industry
-	var orgStats = (object.find($(".orgstats")).text().split(";"));
-	for (i in orgStats){
-		orgStats[i] = $.trim(orgStats[i]);
-	};
-
-	//pushing data to the positions object
-	positions.push({
-	title : object.find($(".title")).text(),
-	subTitle : "",
-	company : {
-			name : $.trim(object.find($(".org.summary")).text()),
-			location : object.find($(".location")).text(),
-			industry : orgStats[orgStats.length-1], //industry always seems to be the last element in the orgstats array
-		},
-	startDate : {
-			year : startDateInt[0],
-			month : startDateInt[1],
-		},
-	endDate : {
-			isCurrent : "0",
-			year : endDateInt[0],
-			month : endDateInt[1],
-		},
-	summary : $.trim(object.find($(".description")).text()),
+	//getting start date end date
+	timeDate = object.find($("time")).toArray();
+	var startDateInt = timeDate[0].attributes[0].value;
+	startDateInt = startDateInt.split("-");
+	if (timeDate[1].innerText === " – Present"){
+			isCurrent = "1";
+			var endDateInt = ["",""];
+			endYear = "";	
+		} else {
+			var endDateInt = timeDate[1].attributes[0].value;
+			endDateInt = endDateInt.split("-");
+			};
 	
-
+	//pushing data to the posititions object
+	positions.push({
+	title : object.find($("a[name='title']")).text(),
+	subTitle : "",
+	companyName : $.trim(object.find($("strong")).text()),
+	companyLocation : object.find($(".locality")).text(),
+	companyIndustry : "unknown",
+	startDateYear : startDateInt[0],
+	startDateMonth : startDateInt[1],
+	isPositionCurrent : isCurrent,
+	endDateYear : endDateInt[0],
+	endDateMonth : endDateInt[1],
+	summary : $.trim(object.find($(".description")).text()),
+	//logoUrl : object.find($(".experience-logo a span strong img")).attr("src")
 	});
 }
 
 function populateEducationObject(object) {
 	//this function is for populating data from Education History
 	
-	//splitting the dates into month and year. If start date or end date don't exist, replace with ""
-	if (object.find($(".dtstart")).attr("title")) {
-		var startDateInt = object.find($(".dtstart")).attr("title").split("-");	
-	} else {
-		var startDateInt = ["",""];
-	}
-	
-	if (object.find($(".dtend")).attr("title")) {
-		var endDateInt = object.find($(".dtend")).attr("title").split("-");	
-	} else {
-		var endDateInt = ["",""];
-	}
-	
-	//End Date might be problematic. I'm not sure what the html looks like if a user's most current education
-	//has 'Current' as it's end date.
-	console.log($.trim(object.find($(".org.summary")).text()));
+	//getting start date end date
+	timeDate = object.find($("time")).toArray();
+	var startDateInt = timeDate[0].attributes[0].value;
+	//startDateInt = startDateInt.split("-");
+	var endDateInt = timeDate[1].attributes[0].value;
+	//endDateInt = endDateInt.split("-");
+
 	//pushing data to educations object
 	educations.push({
-	title : object.find($(".degree")).text(), //Degree
-	subTitle : $.trim(object.find($(".major")).text()), //Major
-	company : {
-			name : $.trim(object.find($(".org.summary")).text()), //College Name
-			industry : "",
-		},
-	startDate : {
-			year : startDateInt[0],
-			month : startDateInt[1],
-		},
-	endDate : {
-			isCurrent : "0",
-			year : endDateInt[0],
-			month : endDateInt[1],
-		},
-	location : object.find($(".location")).text(),
-	summary : $.trim(object.find($(".description")).text()),
-
+		title : object.find($(".degree")).text(),
+		subTitle : object.find($(".major")).text(),
+		companyName : $.trim(object.find($("h4 a")).text()),
+		companyLocation : object.find($(".locality")).text(),
+		companyIndustry : "unknown",
+		startDateYear : startDateInt,
+		startDateMonth : "1",
+		isPositionCurrent : isCurrent,
+		endDateYear : endDateInt,
+		endDateMonth : "12",
+		summary : $.trim(object.find($(".description")).text()),
+		//logoUrl : object.find($(".education-logo img")).attr("src")
 	});
+
 }

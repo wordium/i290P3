@@ -1,5 +1,5 @@
 chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
-    //console.log(msg);
+    console.log(msg);
     //getting position history
     for (j in msg.data[0].positionHistory) {
         profile = [];
@@ -9,15 +9,15 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
             username : msg.data[0].profileUsername,
             profileID : msg.data[0].id,
             title : msg.data[0].positionHistory[j].title,
-            subTitle : "",
-            companyName : msg.data[0].positionHistory[j].company.name,
-            companyIndustry : msg.data[0].positionHistory[j].company.industry,
-            location : msg.data[0].positionHistory[j].company.location,
-            startDateYear : msg.data[0].positionHistory[j].startDate.year,
-            startDateMonth : msg.data[0].positionHistory[j].startDate.month,
-            endDateIsCurrent : msg.data[0].positionHistory[j].endDate.isCurrent,
-            endDateYear : msg.data[0].positionHistory[j].endDate.year,
-            endDateMonth : msg.data[0].positionHistory[j].endDate.month,
+            subTitle : msg.data[0].positionHistory[j].subTitle,
+            companyName : msg.data[0].positionHistory[j].companyName,
+            companyIndustry : msg.data[0].positionHistory[j].companyIndustry,
+            location : msg.data[0].positionHistory[j].companyLocation,
+            startDateYear : msg.data[0].positionHistory[j].startDateYear,
+            startDateMonth : msg.data[0].positionHistory[j].startDateMonth,
+            endDateIsCurrent : msg.data[0].positionHistory[j].isPositionCurrent,
+            endDateYear : msg.data[0].positionHistory[j].endDateYear,
+            endDateMonth : msg.data[0].positionHistory[j].endDateMonth,
             summary : msg.data[0].positionHistory[j].summary  
         });
         
@@ -34,14 +34,14 @@ chrome.extension.onMessage.addListener(function (msg, _, sendResponse) {
             profileID : msg.data[0].id,
             title : msg.data[0].educationHistory[j].title,
             subTitle : msg.data[0].educationHistory[j].subTitle,
-            companyName : msg.data[0].educationHistory[j].company.name,
-            companyIndustry : "",
-            startDateYear : msg.data[0].educationHistory[j].startDate.year,
-            startDateMonth : msg.data[0].educationHistory[j].startDate.month,
-            endDateIsCurrent : "0",
-            endDateYear : msg.data[0].educationHistory[j].endDate.year,
-            endDateMonth : msg.data[0].educationHistory[j].endDate.month,
-            location : msg.data[0].educationHistory[j].location,
+            companyName : msg.data[0].educationHistory[j].companyName,
+            companyIndustry : msg.data[0].educationHistory[j].companyIndustry,
+            startDateYear : msg.data[0].educationHistory[j].startDateYear,
+            startDateMonth : msg.data[0].educationHistory[j].startDateMonth,
+            endDateIsCurrent : msg.data[0].educationHistory[j].isPositionCurrent,
+            endDateYear : msg.data[0].educationHistory[j].endDateYear,
+            endDateMonth : msg.data[0].educationHistory[j].endDateMonth,
+            location : msg.data[0].educationHistory[j].companyLocation,
             summary : msg.data[0].educationHistory[j].summary  
         });
         
