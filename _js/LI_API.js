@@ -302,7 +302,8 @@ function getOtherProfileFromSQL(username, svg_id) {
     })
             .done(function(data) {
                 console.log(data);
-                if (data!==null) {
+                if (data!==null && typeof(data)!==null) {
+                    console.log(data);
                     var parsedData = JSON.parse(data);
                     console.log(parsedData);
                     var profile = creatingProfileObject(parsedData);
@@ -337,7 +338,7 @@ function creatingProfileObject(data) {
             console.log(data[i]);
             //console.log(data[i].positionCompanyName);
             //pushing data to the positions object
-
+            
             var position = new Position();
             position.id = Math.ceil(Math.random() * 1000000);
             position.title = data[i].positionTitle;

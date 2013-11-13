@@ -294,7 +294,7 @@ function timelineEvents(t)
                 {
                     var pos = t.allPositions[i];
 //                    console.log(id);
-                    console.log(pos['id']);
+//                    console.log(pos['id']);
                     if (pos['id'] === id) {
                         msg = pos.formatHTML();
                         console.log(msg);
