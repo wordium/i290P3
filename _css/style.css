@@ -1,9 +1,8 @@
-@import url(http://fonts.googleapis.com/css?family=Sintony:400,700);
+@import url(https://fonts.googleapis.com/css?family=Arimo:400,700);
 
 /* colours
 
-  text colour (dark blue): #23659c;
-  
+  dark blue = #23659c;
   light blue = #2777b6
   medium blue = #1b86bc
 
@@ -14,58 +13,72 @@
 
 */
 
-/* general styling */
+/****** general styling ******/
 body{
     width:1200px;
     background: #333;
-    font-family: "Sintony", sans-serif;
+    font-family: "Arimo", sans-serif;
     color: white;
     margin:  0 auto;
+    font-size: 0.8em;
+}
+
+a {
+    color: #fff;
+}
+
+img {
+  border: 2px solid #23659c;
 }
 
 svg{
     /* background: rgba(256,256,256,0.05); */
     margin:0 0 20px 0;
+
+
 }
 svg text{
     fill: white;
 }
+
 .main-section{
-
-    /* border: 2px solid #23659c; */
     margin: 0 0 10px 10px;
-    border-radius: 0px;
-    
-
     display: inline-block;
     background-color: rgba(255,255,255,.1);
-    
-
     vertical-align: top;
 
 }
+
 section{
     display:inline-block;
     float:left;
 }
 
-/* Connections chart */
+/****** Connections chart ******/
 .chart-title {
     fill: #E0F1FF;
 }
+<<<<<<< HEAD
 #profiles, #remote-profiles{
+=======
+
+#profiles{
+>>>>>>> a404c49eaab24cf4330bcf629b8655b4a1e66ce4
     width:100%;
     display: inline-block;
 }
+
 #connections{
     width: 800px;
     max-height: 975px;
 }
+
 #preview{
     width: 374px;
     max-height: 970px;
     overflow-y: auto;
 }
+
 #industry-viz{
     float:left;
     width: 100%;
@@ -92,17 +105,23 @@ section{
     z-index:100;
     background-color: #fff;
 }
+
 #member-popup
 {
         display:none;
     max-width: 300px;
 }
+
 #position-popup
 {
-        display:none;
-    
-        max-width: 300px;
+    display:none;
+    max-width: 300px;
 }
+
+.position-bar {
+  fill: #23659c;
+}
+
 #industry-viz .titles{
     /* color: #23659c; */
     fill: rgb(173,25,198);
@@ -133,14 +152,14 @@ section{
     stroke-width:1px;
 }
 
-/* PROFILE */
-
+/****** PROFILE ******/
 .user-industry-profile
 {
     /*width: 90px;*/
     padding:0 0 5px 5px;
     float:left;
 }
+
 .user-industry-profile :hover
 {
     background-color:#eee;
@@ -149,37 +168,44 @@ section{
 .user-industry-profile ul li:hover{
     background-color: #eee;         
 }
+
 .user-industry-profile img
 {
     width: 80px;
     height:80px;
 
 }
+
 .user-industry-profile h1
 {
     font-size:.75em;
 }
+
 .profile{
 
     display: inline-block;
     margin-bottom: 20px;
 }
+
 .user-profile{
     padding: 10px;
     margin: 10px;
     width: 350px;
     /* height: 300px; */
     overflow-y: auto;
+    background: ;
 
     float:left;
     display: inline-block;
 }
+
 #industry
 {
     height:450px;
 }
-/* MAPS */
 
+
+/****** MAPS ******/
 #world-map {
     position: relative;
     width: 800px;
@@ -187,30 +213,12 @@ section{
 }
 
 
-/* timeline viz */
+/****** timeline viz ******/
 .timeline {
     width:800px;
     display: none;
-
 }
 
 .timeline-div{
     display:none;
-}
-
-/* unused? */
-#people-search{
-
-    width:45%;
-}
-
-.preview-header {
-    width:100%;
-    display:inline-block;
-    font-weight: bolder;
-    text-align:center;
-
-    word-wrap: normal;
-    word-break: break-word;
-    margin-bottom: 10px;
 }

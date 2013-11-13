@@ -83,10 +83,10 @@ UserProfile.prototype.formatHTML = function()
     var str = "<div id='profile-" + this.id
             + "' class='user-profile'>"
             + "<a href='" + this.profileUrl + "' target='_blank'>"
+            + "<h2>" + this.name + "</h2>"
             + "<img src='" + this.pictureUrl + "' alt='" + this.name + "'/>"
-            + "<p>" + this.name
-            + "</p></a>"
-            + "<p>" + this.title + "</p>";
+            + "</a>"
+            + "<h3>" + this.title + "</h3>";
     if (this.positions && this.positions.length > 0)
         str += "<p>"
                 + ((this.positions[0].company) ? this.positions[0].company : "") + "</p>";

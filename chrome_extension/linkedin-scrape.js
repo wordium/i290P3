@@ -54,7 +54,7 @@ $(document).ready(function(){
 			positionHistory: positions,
 			educationHistory: educations 
 		});
-		//console.log(profile);
+		console.log(profile);
 		//this sends the object positions to background.js
 		chrome.runtime.sendMessage({objectProfileKey: JSON.stringify(profile)}, function(response) {
 		});
@@ -80,21 +80,38 @@ function populatePositionsObject(object) {
 			endDateInt = endDateInt.split("-");
 			};
 	
+	//passing an & to PHP wreaks havoc. I made a function to get rid of ampersands in all strings
+	var titlePosition = object.find($("a[name='title']")).text();
+	var companyNamePosition = $.trim(object.find($("h5:not(.experience-logo)")).text());
+	var companyLocationPosition = object.find($(".locality")).text();
+	var summaryPosition = $.trim(object.find($(".description")).text());
+	
+	titlePosition = escapeAmpersands(titlePosition);
+	companyNamePosition = escapeAmpersands(companyNamePosition);
+	companyLocationPosition = escapeAmpersands(companyLocationPosition);
+	summaryPosition = escapeAmpersands(summaryPosition);
+
+
 	//pushing data to the posititions object
 	positions.push({
-	title : object.find($("a[name='title']")).text(),
+	title : titlePosition,
 	subTitle : "",
-	companyName : $.trim(object.find($("strong")).text()),
-	companyLocation : object.find($(".locality")).text(),
+	companyName : companyNamePosition,
+	companyLocation : companyLocationPosition,
 	companyIndustry : "unknown",
 	startDateYear : startDateInt[0],
 	startDateMonth : startDateInt[1],
 	isPositionCurrent : isCurrent,
 	endDateYear : endDateInt[0],
 	endDateMonth : endDateInt[1],
-	summary : $.trim(object.find($(".description")).text()),
+	summary : summaryPosition,
 	//logoUrl : object.find($(".experience-logo a span strong img")).attr("src")
 	});
+}
+
+function escapeAmpersands(string) {
+	//that g acts as a greedy operator to change all &s
+	return string.replace(/&/g, "%26");
 }
 
 function populateEducationObject(object) {
