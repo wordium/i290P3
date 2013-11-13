@@ -18,13 +18,13 @@ body{
     width:1200px;
     background: #333;
     font-family: "Arimo", sans-serif;
-    color: white;
+    color: #E0F1FF;
     margin:  0 auto;
     font-size: 0.8em;
 }
 
 a {
-    color: #fff;
+    color: #E0F1FF;
 }
 
 img {
@@ -41,6 +41,14 @@ img {
 section{
     display:inline-block;
     float:left;
+}
+
+h1, .section-header, #helptext {
+  text-align: center;
+}
+
+h2 {
+  margin-top: 0;
 }
 
 
@@ -76,7 +84,7 @@ svg{
 
 #preview{
     width: 1190px;
-    max-height: 300px;
+    height: 300px;
     overflow-y: auto;
 }
 
@@ -140,11 +148,16 @@ svg{
     stroke:#ccc;
     stroke-width:1px;
 }
+
 #industry-viz .grid{
     fill:none;
     stroke:#ccc;
     /*stroke-dasharray:5,5;*/
     stroke-width:1px;
+}
+
+#industry-viz .titles {
+  fill: #000;
 }
 
 /****** PROFILE ******/
