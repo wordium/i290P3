@@ -9,13 +9,7 @@ Project description: We are using the social classifications of the data on Link
 
 Instructions from Chrome Extension: 
 - Navigate to the extensions section in the Chrome browser. 
-- Make sure 'Developer Mode' is checked at the top right.
-- Click the 'Load Unpacked Extension' button
-- Navigate to the Chrome Extension folder and load that.
-
-OR
-
-- Drag the chrome_extension.crx into the Extensions secion and install or accept or something
+- Drag the chrome_extension.crx from the project folder into the Extensions section and click 'Add'
 
 Team members and roles:
  - Hassan Jannah: Visualization/D3/LinkedIn API/Front End
