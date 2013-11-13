@@ -66,7 +66,7 @@ $(document).ready(function(){
 function populatePositionsObject(object) {
 	//this function is for populating data from past positions
 	//splitting the dates into month and year
-
+	var isCurrent = "0";
 	//getting start date end date
 	timeDate = object.find($("time")).toArray();
 	var startDateInt = timeDate[0].attributes[0].value;
