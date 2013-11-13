@@ -59,7 +59,11 @@ section{
     fill: #E0F1FF;
 }
 
+<<<<<<< HEAD
 #profiles, #remote-profiles{
+=======
+#profiles{
+>>>>>>> a404c49eaab24cf4330bcf629b8655b4a1e66ce4
     width:100%;
     display: inline-block;
 }
@@ -189,6 +193,7 @@ section{
     width: 350px;
     /* height: 300px; */
     overflow-y: auto;
+    background: ;
 
 
     float:left;
