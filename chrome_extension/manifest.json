@@ -9,10 +9,15 @@
         ]
     },
     "content_scripts" : [{
-    "js": ["jquery.2.0.3.js", "linkedin-scrape.js"],
+    "js": ["jquery.2.0.3.js", "linkedin-scrape2.js"],
     "matches": ["http://www.linkedin.com/in/*", "http://www.linkedin.com/pub/*"],
     "exclude_matches": ["http://www.linkedin.com/profile/*"]
-    }],
+    },
+    {
+    "js": ["jquery.2.0.3.js", "openLinksInIncognito.js"],
+    "matches": ["http://*/*/i290P3/"]
+    }
+    ],
     "web_accessible_resources": [
         "project3.js",
         "index.html",
