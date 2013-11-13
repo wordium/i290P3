@@ -264,7 +264,7 @@ function drawText(t)
                 'x': t.tChartW / 2,
                 'y': t.yPadding,
                 "text-anchor": "middle",
-                "class": "titles"
+                "class": "titles chart-title"
 
             })
 }

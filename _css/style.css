@@ -31,22 +31,11 @@ img {
   border: 2px solid #23659c;
 }
 
-svg{
-    /* background: rgba(256,256,256,0.05); */
-    margin:0 0 20px 0;
-
-
-}
-svg text{
-    fill: white;
-}
-
 .main-section{
     margin: 0 0 10px 10px;
     display: inline-block;
     background-color: rgba(255,255,255,.1);
     vertical-align: top;
-
 }
 
 section{
@@ -54,11 +43,23 @@ section{
     float:left;
 }
 
-/****** Connections chart ******/
-.chart-title {
+
+/****** SVG styling ********/
+svg{
+    /* background: rgba(256,256,256,0.05); */
+    margin:0 0 20px 0;
+}
+
+.chart-title, .titles, svg text {
     fill: #E0F1FF;
 }
 
+.chart-title {
+    font-size: 1.25em;
+}
+
+
+/****** Connections chart ******/
 #profiles{
     width:100%;
     display: inline-block;
@@ -116,12 +117,6 @@ section{
 
 .position-bar {
   fill: #23659c;
-}
-
-#industry-viz .titles{
-    /* color: #23659c; */
-    fill: rgb(173,25,198);
-    font-size: 0.8em;
 }
 
 #industry-viz .tick text{
