@@ -23,6 +23,6 @@ Technologies used:
 - MySQL/PHP for the databases
 - Chrome Extension for web scraping the connections
 
-Link to demo version: https://people.ischool.berkeley.edu/~jannah/i290P3/
+Link to demo version: http://people.ischool.berkeley.edu/~jenton/i290P3/
 
 Known bugs:
