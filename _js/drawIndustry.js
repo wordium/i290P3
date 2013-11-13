@@ -87,13 +87,14 @@ function drawIndustryBarChart(profileData)
     valueTitles = [];
     values = [];
 
-    console.log($(IND_VIZ_ID).parent());
+    //console.log($(IND_VIZ_ID).parent());
 
     w = parseInt($(IND_VIZ_ID).css('width'));
     h = parseInt($(IND_VIZ_ID).parent().css('height'));
     top = 0;
     left = 0;
     vizId = IND_VIZ_ID;
+//    $(vizId).parent().show();
     viz = d3.select(vizId);
     IND_MAX_DRAW = 10;
     title = "Top 10 Industry Connections";
@@ -103,7 +104,7 @@ function drawIndustryBarChart(profileData)
 /*
  function drawConnections(connections)
  {
- //    console.log(connections);
+ //    //console.log(connections);
  
  var industries = {};
  for (var i = 0, j = profiles.length; i < j; i++)
@@ -115,7 +116,7 @@ function drawIndustryBarChart(profileData)
  industries[industry] + 1 : 1;
  
  }
- console.log(industries);
+ //console.log(industries);
  var sortedIndustries = sortObjectByValue(industries);
  }*/
 
@@ -131,7 +132,7 @@ function drawIndustryBarChart(profileData)
  });
  for (var i = 0, j = sortable.length; i < j; i++)
  {
- //        console.log(sortable[i]);
+ //        //console.log(sortable[i]);
  sorted[sortable[i][0]] = sortable[i][1];
  }
  return sorted;
@@ -156,9 +157,9 @@ function loadIndustryData() {
     }
 
 
-//    console.log(industries);
+//    //console.log(industries);
     profilesByIndustry = sortIndustrySet(industries);
-    console.log(profilesByIndustry);
+    //console.log(profilesByIndustry);
 
 }
 
@@ -169,13 +170,13 @@ function sortIndustrySet(oldset)
     for (var key in oldset)
         sortable.push([key, oldset[key].length]);
 
-    console.log(sortable);
+    //console.log(sortable);
     sortable.sort(function(a, b) {
         return b[1] - a[1];
     });
     for (var i = 0, j = sortable.length; i < j; i++)
     {
-        //        console.log(sortable[i]);
+        //        //console.log(sortable[i]);
         var key = sortable[i][0];
         sorted[key] = oldset[key];
     }
@@ -210,7 +211,7 @@ function prepareData()
     {
         drawValues[colCount - 1] += values[i];
         var prof = profilesByIndustry[valueTitles[i]];
-//        console.log(prof);
+//        //console.log(prof);
         for (var k = 0, l = prof.length; k < l; k++)
             printedProfiles["Others"].push(prof[k]);
     }
@@ -235,7 +236,7 @@ function prepareData()
 
     minValue = min;
     maxValue = max;
-//    console.log("min=" + min + "\tmax=" + max);
+//    //console.log("min=" + min + "\tmax=" + max);
 }
 function draw(orientation)
 {
@@ -319,9 +320,9 @@ function drawXAxis()
     xAxisTop = Math.ceil(maxValue / 10) * 10;
     xAxisBottom = 0;
 
-    console.log("chartW=" + chartW);
-    console.log("maxValue=" + maxValue);
-    console.log("xAxisTop=" + xAxisTop);
+//    //console.log("chartW=" + chartW);
+//    //console.log("maxValue=" + maxValue);
+//    //console.log("xAxisTop=" + xAxisTop);
     xAxisScale = d3.scale.linear().domain([xAxisBottom, xAxisTop]).range([0, chartW]);
     xAxis = d3.svg.axis().scale(xAxisScale).orient("bottom").ticks(ticks);
     xScale = d3.scale.linear().domain([xAxisBottom, xAxisTop]).range([0, chartW]);
@@ -370,7 +371,7 @@ function drawVBars()
 }
 function drawHBars()
 {
-    console.log(drawValues);
+    //console.log(drawValues);
     viz.selectAll("rect")
             .data(drawValues)
             .enter()
@@ -378,7 +379,7 @@ function drawHBars()
             .attr({
                 "height": barH,
                 "width": function(d, i) {
-//                    console.log(d + "\t" + xScale(d));
+//                    //console.log(d + "\t" + xScale(d));
                     return xScale(d);
                 },
                 "x": function(d, i) {
@@ -516,7 +517,7 @@ function hBarEvents() {
             .on("click", function() {
                 var self = $(this);
                 var industry = "" + self.attr("desc");
-                console.log(industry);
+                //console.log(industry);
                 displayPreview(printedProfiles[industry], industry);
             });
 }
@@ -556,21 +557,23 @@ function profilePreviewEvents()
                 var self = $(this);
                 var id = self.attr('id');
                 id = id.replace('preview-profile-', '');
-//                console.log(id);
+//                //console.log(id);
                 var profile = new UserProfile();
 
                 for (var i = 0, j = profiles.length; i < j; i++)
                 {
                     profile = (profiles[i].id === id) ? profiles[i] : profile;
                 }
-//                console.log(profile);
+//                //console.log(profile);
 
                 displayProfile(profile);
-                
-                console.log(profile);
-                
+
+                //console.log(profile);
+                   $('#remote-timeline').hide();
+                   $('#remote-timeline').empty();
                 getOtherProfileFromSQL(profile.username);
-                
+               
+
             });
 }
 
@@ -582,8 +585,8 @@ function displayPreview(profs, title)
     for (var i = 0, j = profs.length; i < j; i++)
     {
         var profile = profs[i];
-//                console.log(profile);
-        $(IND_PREVIEW_ID).append(formatPreviewProfileHTML(profile));
+//                //console.log(profile);
+        $(IND_PREVIEW_ID).append(formatPreviewProfileHTML(profile)).show();
     }
     profilePreviewEvents();
 }
@@ -594,9 +597,9 @@ function displayPreview(profs, title)
  */
 function displayProfile(profile)
 {
-    $(IND_PROFILE_DIV_ID).empty();
+    $(IND_PROFILE_DIV_ID).children('.user-profile').remove();
     var output = profile.formatHTML();
-    $(IND_PROFILE_DIV_ID).append(output);
+    $(IND_PROFILE_DIV_ID).prepend(output);
 }
 
 /**
@@ -607,13 +610,12 @@ function displayProfile(profile)
 function formatPreviewProfileHTML(profile)
 {
     var hstr = "<li id='preview-profile-" + profile.id
-            + "' class='user-industry-profile'>"
-//            + "<a href='" + profile.profileUrl + "' target='_blank'>"
-            + "<img src='" + profile.pictureUrl + "' alt='" + profile.name + "'/>"
-//            + "<h1>" + profile.name
-//            + "</h1>"
-//            +"</a>"
-            + "</li>";
+            + "' class='user-industry-profile'>";
+    hstr += "<img src='";
+    console.log(profile.pictureUrl);
+    hstr += ((profile.pictureUrl) ? profile.pictureUrl : " ");
+    hstr += "' alt='" + profile.name + "' title='" + profile.name + "'/>";
+    hstr += "</li>";
     return hstr;
 
 }
@@ -627,8 +629,8 @@ function formatMemberPopup(id)
     {
         if (profiles[i].id === id) {
             profile = profiles[i];
-            console.log('profile found');
-            console.log(profile);
+//            //console.log('profile found');
+//            //console.log(profile);
             break;
         }
 
@@ -638,7 +640,7 @@ function formatMemberPopup(id)
     var msg = "<p><strong>" + profile.name + "</strong>"
             + "<br>" + profile.title
             + "<br>" + profile.currentCompany + "<p>";
-    console.log(msg);
+//    //console.log(msg);
     $(POPUP_ID).empty();
     $(POPUP_ID).append(msg);
 

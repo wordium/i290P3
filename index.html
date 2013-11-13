@@ -43,12 +43,17 @@ and open the template in the editor.
     <body>
 
         <script type="IN/Login"></script>
-        <div id="profiles" class="main-section">
-            <div id="my-profile" >
+        <div id="profiles">
+            <div id="my-profile" class='profile main-section'  >
 
+
+                <svg id="my-timeline" class='timeline' xmlns="http://www.w3.org/2000/svg" version="1.1">
+                </svg> 
             </div>
-            <div id="remote-profile">
-            </div>
+            <div id="remote-profile"class='profile main-section' >
+
+                <svg id="remote-timeline" class='timeline' xmlns="http://www.w3.org/2000/svg" version="1.1">
+                </svg>   </div>
         </div>
 
         <div id="connections" class="main-section">
@@ -66,14 +71,10 @@ and open the template in the editor.
                 <ul></ul>
             </div>
 
-        </div><div id="my-timeline-div">
-            <svg id="my-timeline" class='timeline' xmlns="http://www.w3.org/2000/svg" version="1.1">
-            </svg> 
-            <svg id="remote-timeline" class='timeline' xmlns="http://www.w3.org/2000/svg" version="1.1">
-            </svg> 
         </div>
 
-        <div id="member-popup"></div>
-        <div id ='position-popup'></div>
+
+        <div id="member-popup" class='popup'></div>
+        <div id ='position-popup' class='popup'></div>
     </body>
 </html>

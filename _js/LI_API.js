@@ -90,8 +90,10 @@ function drawCurrentUserProfile()
             .result(function(profiles) {
 
                 var profile = new UserProfile(profiles.values[0]);
-                $('#my-profile').empty().append(profile.formatHTML());
-                drawTimeline(profile, '#my-timeline');
+                $('#my-profile').children('.user-profile').remove();
+                $('#my-profile').prepend(profile.formatHTML());
+                var timeline = new Timeline();
+                timeline.draw(profile, '#my-timeline');
             });
 }
 function getProfiles(users)
@@ -139,20 +141,20 @@ function getConnections(users)
                     console.log("deferred rejected");
                 });
 }
-
-function getDeferredConnections(user)
-{
-//    console.log('getting connections for ' + user);
-    return IN.API.Connections(user)
-            .fields(PROFILE_FIELDS)
-            .params({"count": 20})
-            .result(function(connections) {
-                return connections;
-            })
-            .error(function() {
-                console.log("deferred rejected");
-            });
-}
+/*
+ function getDeferredConnections(user)
+ {
+ //    console.log('getting connections for ' + user);
+ return IN.API.Connections(user)
+ .fields(PROFILE_FIELDS)
+ .params({"count": 20})
+ .result(function(connections) {
+ return connections;
+ })
+ .error(function() {
+ console.log("deferred rejected");
+ });
+ }*/
 function displayProfiles(member) {
 //    console.log(profiles);
 }
@@ -301,7 +303,9 @@ function getOtherProfileFromSQL(username) {
                 var parsedData = JSON.parse(data);
                 console.log(parsedData);
                 var profile = creatingProfileObject(parsedData);
-                drawTimeline(profile, '#remote-timeline');
+                var timeline = new Timeline();
+                timeline.draw(profile, '#remote-timeline');
+
             })
             .fail(function(data) {
                 console.log("fail");
@@ -326,25 +330,27 @@ function creatingProfileObject(data) {
 
         for (var i = 0; i < data.length; i++)
         {
+            console.log(data[i]);
             //console.log(data[i].positionCompanyName);
             //pushing data to the positions object
 
             var position = new Position();
-            position.id = Math.random()*1000000;
-            position.title = data[i.positionTitle];
+            position.id = Math.ceil(Math.random() * 1000000);
+            position.title = data[i].positionTitle;
             position.company = data[i].positionCompanyLocation;
             position.industry = data[i].positionCompanyIndustry;
             position.startYear = parseInt(data[i].positionStartDateYear);
             position.startMonth = parseInt(data[i].positionStartDateMonth);
             position.startDate = new Date(position.startYear, position.startMonth);
-            position.isCurrent =  data[i].positionEndDateIsCurrent===1;
+            position.isCurrent = parseInt(data[i].positionEndDateIsCurrent) === 1;
             if (position.isCurrent)
             {
                 position.endDate = new Date();
                 position.endYear = (new Date()).getFullYear();
                 position.endMonth = (new Date()).getMonth;
             }
-            else {
+            else
+            {
 
                 position.endYear = parseInt(data[i].positionEndDateYear);
                 position.endMonth = parseInt(data[i].positionEndDateMonth);
@@ -352,27 +358,7 @@ function creatingProfileObject(data) {
             }
             position.summary = data[i].positionSummary;
             profile.positions.push(position);
-            /*
-             workHistory.push({
-             isPositionOrEducation: data[i].isPositionOrEducation,
-             title: data[i].positionTitle,
-             subTitle: data[i].positionSubTitle,
-             company: {
-             name: data[i].positionCompanyName,
-             location: data[i].positionCompanyLocation,
-             industry: data[i].positionCompanyIndustry,
-             },
-             startDate: {
-             year: data[i].positionStartDateYear,
-             month: data[i].positionStartDateMonth,
-             },
-             endDate: {
-             isCurrent: data[i].positionEndDateIsCurrent,
-             year: data[i].positionEndDateYear,
-             month: data[i].positionEndDateMonth,
-             },
-             summary: data[i].positionSummary,
-             });*/
+
         }
     }
     //console.log(userDataTimeline);

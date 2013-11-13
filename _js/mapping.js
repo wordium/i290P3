@@ -73,11 +73,11 @@ function initMap()
         scope: 'world',
         geographyConfig: {
             popupOnHover: true,
-            highlightOnHover: true
+            highlightOnHover: false
         },
         fills: {'SELECTED': '#FBDDA4', defaultFill: '#ABDDA4'}});
 //    $(MAP_ID).datamaps(defaultOptions);
-
+//    $(MAP_ID).parent().show();
     var position = $(MAP_ID).position();
     console.log(position);
     $('#datamaps-hoverover').css('position', 'relative');
@@ -149,7 +149,7 @@ function drawBubbles()
 
     map.bubbles(mapData, {
         popupTemplate: function(geography, data) {
-            return ['<div class="hoverinfo"><strong>' + data.countryName + '</strong>',
+            return ['<div class="hoverinfo popup"><strong>' + data.countryName + '</strong>',
                 '<br/>Count: ' + data.count + ' members',
                 '</div>'].join('');
         }

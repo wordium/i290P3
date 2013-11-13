@@ -91,6 +91,7 @@ UserProfile.prototype.formatHTML = function()
         str += "<p>"
                 + ((this.positions[0].company) ? this.positions[0].company : "") + "</p>";
     str += ((this.summary) ? "<strong>Summary:</strong><p>" + this.summary + "</p>" : "")
+ 
             + "</div>";
 
     return str;
