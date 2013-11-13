@@ -101,47 +101,6 @@ function drawIndustryBarChart(profileData)
     draw('h');
 }
 
-/*
- function drawConnections(connections)
- {
- //    //console.log(connections);
- 
- var industries = {};
- for (var i = 0, j = profiles.length; i < j; i++)
- {
- 
- var userProfile = profiles[i];
- var industry = userProfile.industry;
- industries[industry] = (industries[industry]) ?
- industries[industry] + 1 : 1;
- 
- }
- //console.log(industries);
- var sortedIndustries = sortObjectByValue(industries);
- }*/
-
-/*
- function sortObjectByValue(objects)
- {
- var sorted = {};
- var sortable = [];
- for (var key in objects)
- sortable.push([key, objects[key]])
- sortable.sort(function(a, b) {
- return b[1] - a[1]
- });
- for (var i = 0, j = sortable.length; i < j; i++)
- {
- //        //console.log(sortable[i]);
- sorted[sortable[i][0]] = sortable[i][1];
- }
- return sorted;
- 
- }
- */
-
-
-
 function loadIndustryData() {
     var industries = {};
     for (var i = 0, j = profiles.length; i < j; i++)
@@ -566,13 +525,34 @@ function profilePreviewEvents()
                 }
 //                //console.log(profile);
 
-                displayProfile(profile);
+                var div_id = "remote-profile-" + profile.id;
+                var svg_id = "remote-timeline-" + profile.id;
+                var div_p = "<div id='" + div_id + "' class='profile main-section' >"
+                        + "</div>";
+                var svg_html = "<svg id='" + svg_id + "' class='timeline' xmlns='http://www.w3.org/2000/svg' version='1.1'>"
+                        + "</svg>";
 
+                div_id = "#" + div_id;
+                svg_id = "#" + svg_id;
+                
+                      if ($(div_id))
+                {
+                    $(div_id).hide();
+                    $(div_id).empty();
+                }
+             
+                $('#remote-profiles').append(div_p);
+                displayProfile(profile, div_id);
+                $(div_id).append(svg_html);
                 //console.log(profile);
-                   $('#remote-timeline').hide();
-                   $('#remote-timeline').empty();
-                getOtherProfileFromSQL(profile.username);
-               
+           try {
+                    getOtherProfileFromSQL(profile.username, svg_id);
+                } catch (err)
+                {
+                    console.log(err);
+                }
+                $(div_id).show();
+
 
             });
 }
@@ -581,7 +561,8 @@ function displayPreview(profs, title)
 {
     $(IND_PREVIEW_ID).empty();
     var head = "<label class='preview-header'>" + title + "-" + profs.length + "</label>";
-    $(IND_PREVIEW_ID).append(head);
+    $(IND_PREVIEW_ID).siblings('label').remove();
+    $(IND_PREVIEW_ID).parent().prepend(head);
     for (var i = 0, j = profs.length; i < j; i++)
     {
         var profile = profs[i];
@@ -593,13 +574,29 @@ function displayPreview(profs, title)
 /**
  * 
  * @param {UserProfile} profile
+ * @param {type} div_id
  * @returns {undefined}
  */
-function displayProfile(profile)
+function displayProfile(profile, div_id)
 {
-    $(IND_PROFILE_DIV_ID).children('.user-profile').remove();
+//    $(div_id).children('.user-profile').remove();
+//    console.log(profile);
+    var div_p = $(div_id);
     var output = profile.formatHTML();
-    $(IND_PROFILE_DIV_ID).prepend(output);
+    console.log(output);
+    console.log(div_p);
+    div_p.append((output));
+    div_p.show();
+    
+    $('.hide-button').unbind('click');
+    $('.hide-button').on('click', function(i,d)
+    {
+       
+        var self = $(this);
+         console.log('hiding '+ self.attr('id'));
+        self.parent().parent().remove();
+    })
+
 }
 
 /**
@@ -612,7 +609,7 @@ function formatPreviewProfileHTML(profile)
     var hstr = "<li id='preview-profile-" + profile.id
             + "' class='user-industry-profile'>";
     hstr += "<img src='";
-    console.log(profile.pictureUrl);
+//    console.log(profile.pictureUrl);
     hstr += ((profile.pictureUrl) ? profile.pictureUrl : " ");
     hstr += "' alt='" + profile.name + "' title='" + profile.name + "'/>";
     hstr += "</li>";
@@ -633,17 +630,12 @@ function formatMemberPopup(id)
 //            //console.log(profile);
             break;
         }
-
     }
-
-
     var msg = "<p><strong>" + profile.name + "</strong>"
             + "<br>" + profile.title
             + "<br>" + profile.currentCompany + "<p>";
 //    //console.log(msg);
     $(POPUP_ID).empty();
     $(POPUP_ID).append(msg);
-
-
 
 }

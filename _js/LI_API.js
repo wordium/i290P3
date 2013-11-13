@@ -19,6 +19,13 @@ $(document).ready(function()
 {
     init();
 });
+
+$(document).ajaxStart(function() {
+    $("#loading-box").show();
+});
+$(document).ajaxComplete(function() {
+    $("#loading-box").delay(500).fadeOut(500);
+});
 var LI_Athenticated = false;
 var currentUser;
 var COUNT_LIMIT = 0;
@@ -114,7 +121,7 @@ function getProfiles(users)
                 .result(function(profiles) {
                     profile = profiles.values[0];
                     loadedProfiles[i] = profile;
-                    displayProfiles(profile);
+//                    displayProfiles(profile);
                     var member = new UserProfile(profile);
 //                    console.log(member);
                 })
@@ -154,10 +161,10 @@ function getConnections(users)
  .error(function() {
  console.log("deferred rejected");
  });
+ }
+ function displayProfiles(member) {
+ //    console.log(profiles);
  }*/
-function displayProfiles(member) {
-//    console.log(profiles);
-}
 function displayProfilesErrors(error) {
     //profilesDiv = document.getElementById("profiles");
     //profilesDiv.innerHTML = "<p>Oops!</p>";
@@ -293,19 +300,24 @@ function getCurrentProfileFromSQL(object) {
 }
 
 //making a call to get information from database
-function getOtherProfileFromSQL(username) {
+function getOtherProfileFromSQL(username, svg_id) {
+    console.log("fetching user=" + username);
     $.ajax({
         type: "post",
         url: "phpScript.php",
         data: "action=getprofile" + "&username=" + username
     })
             .done(function(data) {
-                var parsedData = JSON.parse(data);
-                console.log(parsedData);
-                var profile = creatingProfileObject(parsedData);
-                var timeline = new Timeline();
-                timeline.draw(profile, '#remote-timeline');
+                console.log(data);
+                if (data!==null && typeof(data)!==null) {
+                    console.log(data);
+                    var parsedData = JSON.parse(data);
+                    console.log(parsedData);
+                    var profile = creatingProfileObject(parsedData);
+                    var timeline = new Timeline();
 
+                    timeline.draw(profile, svg_id);
+                }
             })
             .fail(function(data) {
                 console.log("fail");
@@ -333,7 +345,7 @@ function creatingProfileObject(data) {
             console.log(data[i]);
             //console.log(data[i].positionCompanyName);
             //pushing data to the positions object
-
+            
             var position = new Position();
             position.id = Math.ceil(Math.random() * 1000000);
             position.title = data[i].positionTitle;

@@ -36,6 +36,8 @@ function Timeline()
 }
 Timeline.prototype.draw = function(prof, target)
 {
+    try{
+     
     this.userProfile = new UserProfile();
     this.userProfile = prof;
 
@@ -55,14 +57,19 @@ Timeline.prototype.draw = function(prof, target)
     this.tviz = d3.select(target);
     this.tviz.attr("width", this.tW)
             .attr("height", this.tH);
-    $(target).show();
+   
+//    $(target).css('display','inline-block');
+     $(target).show();
     this.drawTimelineAxis();
     drawTimelineBars(this);
     drawText(this);
     timelineEvents(this);
     $(target).show();
 
-
+    } catch(err)
+    {
+        console.log(err);
+    }
 };
 
 Timeline.prototype.prepareTimelineData = function()
@@ -86,6 +93,7 @@ Timeline.prototype.prepareTimelineData = function()
 
 
     }
+    console.log(this.allPositions);
     this.minDate = new Date(this.minDate.getFullYear(), 0);
     this.maxDate = new Date(this.maxDate.getFullYear(), 12);
     this.sortPositions();
@@ -177,7 +185,7 @@ function drawTimelineBars(t)
                     var months = monthDiff(d.startDate, d.endDate) + 1;
                     if (months < 0)
                         console.log(d);
-                    console.log(t.tScale(months));
+//                    console.log(t.tScale(months));
 //                 console.log(t.prototype);
                     return t.tScale(months);
                 },
@@ -209,16 +217,16 @@ function drawTimelineBars(t)
                     return "position-bar-" + d['id'];
                 }
                 /*
-                ,
-                "fill": function(d, i) {
-                    var dVal = 0;
-//                 if (d < 256) {
-//                 dVal = 256 - d;
-//                 }
-                    dVal = Math.ceil(256 * (i + 1) / (t.allPositions.length + 1));
-//                    console.log(dVal);
-                    return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
-                }*/
+                 ,
+                 "fill": function(d, i) {
+                 var dVal = 0;
+                 //                 if (d < 256) {
+                 //                 dVal = 256 - d;
+                 //                 }
+                 dVal = Math.ceil(256 * (i + 1) / (t.allPositions.length + 1));
+                 //                    console.log(dVal);
+                 return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
+                 }*/
             });
 }
 
@@ -289,10 +297,12 @@ function timelineEvents(t)
                 self.attr('class', self.attr('class') + ' selected-column');
                 var id = parseInt((self.attr('id')).replace("position-bar-", ""));
                 var msg = "";
+                console.log(t.allPositions);
                 for (var i = 0, j = t.allPositions.length; i < j; i++)
                 {
                     var pos = t.allPositions[i];
 //                    console.log(id);
+//                    console.log(pos['id']);
                     if (pos['id'] === id) {
                         msg = pos.formatHTML();
                         console.log(msg);
