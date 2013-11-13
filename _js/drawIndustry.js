@@ -561,7 +561,8 @@ function displayPreview(profs, title)
 {
     $(IND_PREVIEW_ID).empty();
     var head = "<label class='preview-header'>" + title + "-" + profs.length + "</label>";
-    $(IND_PREVIEW_ID).append(head);
+    $(IND_PREVIEW_ID).siblings('label').remove();
+    $(IND_PREVIEW_ID).parent().prepend(head);
     for (var i = 0, j = profs.length; i < j; i++)
     {
         var profile = profs[i];
@@ -586,6 +587,15 @@ function displayProfile(profile, div_id)
     console.log(div_p);
     div_p.append((output));
     div_p.show();
+    
+    $('.hide-button').unbind('click');
+    $('.hide-button').on('click', function(i,d)
+    {
+       
+        var self = $(this);
+         console.log('hiding '+ self.attr('id'));
+        self.parent().parent().remove();
+    })
 
 }
 

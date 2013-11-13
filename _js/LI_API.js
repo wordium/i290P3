@@ -19,6 +19,13 @@ $(document).ready(function()
 {
     init();
 });
+
+$(document).ajaxStart(function() {
+    $("#loading-box").show();
+});
+$(document).ajaxComplete(function() {
+    $("#loading-box").delay(500).fadeOut(500);
+});
 var LI_Athenticated = false;
 var currentUser;
 var COUNT_LIMIT = 0;

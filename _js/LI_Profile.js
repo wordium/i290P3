@@ -56,7 +56,7 @@ function UserProfile(/*JSON Object*/) {
             this.profileUrl = "";
             this.username = "";
         }
-       
+
     }
     else {
         this.name = "";
@@ -91,7 +91,7 @@ UserProfile.prototype.formatHTML = function()
         str += "<p>"
                 + ((this.positions[0].company) ? this.positions[0].company : "") + "</p>";
     str += ((this.summary) ? "<strong>Summary:</strong><p>" + this.summary + "</p>" : "")
- 
+            + "<input type='button' + id='hide-" + this.id + "' class='hide-button' text='hide' value='hide'/>"
             + "</div>";
 
     return str;

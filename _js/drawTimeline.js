@@ -36,6 +36,8 @@ function Timeline()
 }
 Timeline.prototype.draw = function(prof, target)
 {
+    try{
+     
     this.userProfile = new UserProfile();
     this.userProfile = prof;
 
@@ -55,14 +57,19 @@ Timeline.prototype.draw = function(prof, target)
     this.tviz = d3.select(target);
     this.tviz.attr("width", this.tW)
             .attr("height", this.tH);
-    $(target).show();
+   
+//    $(target).css('display','inline-block');
+     $(target).show();
     this.drawTimelineAxis();
     drawTimelineBars(this);
     drawText(this);
     timelineEvents(this);
     $(target).show();
 
-
+    } catch(err)
+    {
+        console.log(err);
+    }
 };
 
 Timeline.prototype.prepareTimelineData = function()
@@ -86,6 +93,7 @@ Timeline.prototype.prepareTimelineData = function()
 
 
     }
+    console.log(this.allPositions);
     this.minDate = new Date(this.minDate.getFullYear(), 0);
     this.maxDate = new Date(this.maxDate.getFullYear(), 12);
     this.sortPositions();
