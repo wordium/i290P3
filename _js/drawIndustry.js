@@ -101,47 +101,6 @@ function drawIndustryBarChart(profileData)
     draw('h');
 }
 
-/*
- function drawConnections(connections)
- {
- //    //console.log(connections);
- 
- var industries = {};
- for (var i = 0, j = profiles.length; i < j; i++)
- {
- 
- var userProfile = profiles[i];
- var industry = userProfile.industry;
- industries[industry] = (industries[industry]) ?
- industries[industry] + 1 : 1;
- 
- }
- //console.log(industries);
- var sortedIndustries = sortObjectByValue(industries);
- }*/
-
-/*
- function sortObjectByValue(objects)
- {
- var sorted = {};
- var sortable = [];
- for (var key in objects)
- sortable.push([key, objects[key]])
- sortable.sort(function(a, b) {
- return b[1] - a[1]
- });
- for (var i = 0, j = sortable.length; i < j; i++)
- {
- //        //console.log(sortable[i]);
- sorted[sortable[i][0]] = sortable[i][1];
- }
- return sorted;
- 
- }
- */
-
-
-
 function loadIndustryData() {
     var industries = {};
     for (var i = 0, j = profiles.length; i < j; i++)

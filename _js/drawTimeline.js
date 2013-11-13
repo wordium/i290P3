@@ -209,16 +209,16 @@ function drawTimelineBars(t)
                     return "position-bar-" + d['id'];
                 }
                 /*
-                ,
-                "fill": function(d, i) {
-                    var dVal = 0;
-//                 if (d < 256) {
-//                 dVal = 256 - d;
-//                 }
-                    dVal = Math.ceil(256 * (i + 1) / (t.allPositions.length + 1));
-//                    console.log(dVal);
-                    return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
-                }*/
+                 ,
+                 "fill": function(d, i) {
+                 var dVal = 0;
+                 //                 if (d < 256) {
+                 //                 dVal = 256 - d;
+                 //                 }
+                 dVal = Math.ceil(256 * (i + 1) / (t.allPositions.length + 1));
+                 //                    console.log(dVal);
+                 return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
+                 }*/
             });
 }
 
@@ -289,6 +289,7 @@ function timelineEvents(t)
                 self.attr('class', self.attr('class') + ' selected-column');
                 var id = parseInt((self.attr('id')).replace("position-bar-", ""));
                 var msg = "";
+                console.log(t.allPositions);
                 for (var i = 0, j = t.allPositions.length; i < j; i++)
                 {
                     var pos = t.allPositions[i];
