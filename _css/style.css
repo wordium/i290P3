@@ -59,12 +59,19 @@ h2 {
     clear: both;
 }
 
-#header {
+#header, .section-header {
     background-color: #F6E68D;
     color: #23659c;
+    border-radius: 2px;
+}
+
+#header {
     padding: 20px;
     margin-top: 14px;
-    border-radius: 2px;
+}
+
+.section-header {
+    padding: 10px;
 }
 
 #LI-logo {
@@ -238,6 +245,7 @@ svg{
     position: relative;
     width: 1190px;
     height: 500px;
+    margin-bottom: 30px;
 }
 
 .hoverinfo {
