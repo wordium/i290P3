@@ -3,11 +3,11 @@
 /* colours
 
   dark blue = #23659c;
-  light blue = #2777b6
+  light blue = #E0F1FF
   medium blue = #1b86bc
 
   darker yellow = #f9ca0e
-  lighter yellow = #f6df11
+  lighter yellow = #F6E68D
 
   black, white
 
@@ -46,17 +46,32 @@ section{
 }
 
 h1, .section-header, #helptext {
-  text-align: center;
+    text-align: center;
 }
 
 h2 {
-  margin-top: 0;
+    margin-top: 0;
 }
 
 .clearfix:after {
-  content: "";
-  display: table;
-  clear: both;
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#header {
+    background-color: #F6E68D;
+    color: #23659c;
+    padding: 20px;
+    margin-top: 14px;
+    border-radius: 2px;
+}
+
+#LI-logo {
+    float: none;
+    height: 30px;
+    vertical-align: top;
+    border: 0;
 }
 
 /****** SVG styling ********/
