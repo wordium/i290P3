@@ -360,6 +360,7 @@ function drawHBars()
                     return "industry-column-h-" + i;
                 },
                 "fill": function(d) {
+                    /* this will give us a blue-green gradient depending on the value of d */
                     var dVal = 0;
                     if (d < 256) {
                         dVal = 256 - d;

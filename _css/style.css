@@ -28,7 +28,9 @@ a {
 }
 
 img {
-    border: 2px solid #23659c;
+    border: 5px solid #23659c;
+    float: left;
+    margin-right: 10px;
 }
 
 .main-section{
@@ -51,11 +53,16 @@ h2 {
   margin-top: 0;
 }
 
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
 /****** SVG styling ********/
 svg{
-    /* background: rgba(256,256,256,0.05); */
     margin:0 0 20px 0;
+
 }
 
 .chart-title, .titles, svg text {
@@ -157,7 +164,7 @@ svg{
 }
 
 #industry-viz .titles {
-  fill: #000;
+    fill: #23659c;
 }
 
 /****** PROFILE ******/
@@ -216,6 +223,10 @@ svg{
     position: relative;
     width: 1190px;
     height: 500px;
+}
+
+.hoverinfo {
+    color: #23659c;
 }
 
 

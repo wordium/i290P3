@@ -88,8 +88,8 @@ UserProfile.prototype.formatHTML = function()
             + "</a>"
             + "<h3>" + this.title + "</h3>";
     if (this.positions && this.positions.length > 0)
-        str += "<p>"
-                + ((this.positions[0].company) ? this.positions[0].company : "") + "</p>";
+        str += "<h3 class='clearfix'>"
+                + ((this.positions[0].company) ? this.positions[0].company : "") + "</h3>";
     str += ((this.summary) ? "<strong>Summary:</strong><p>" + this.summary + "</p>" : "")
             + "<input type='button' + id='hide-" + this.id + "' class='hide-button' text='hide' value='hide'/>"
             + "</div>";
