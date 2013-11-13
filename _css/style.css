@@ -243,6 +243,9 @@ svg{
     height:450px;
 }
 
+#my-profile .hide-button {
+  display: none;
+}
 
 /****** MAPS ******/
 #world-map {
