@@ -566,13 +566,34 @@ function profilePreviewEvents()
                 }
 //                //console.log(profile);
 
-                displayProfile(profile);
+                var div_id = "remote-profile-" + profile.id;
+                var svg_id = "remote-timeline-" + profile.id;
+                var div_p = "<div id='" + div_id + "' class='profile main-section' >"
+                        + "</div>";
+                var svg_html = "<svg id='" + svg_id + "' class='timeline' xmlns='http://www.w3.org/2000/svg' version='1.1'>"
+                        + "</svg>";
 
+                div_id = "#" + div_id;
+                svg_id = "#" + svg_id;
+                
+                      if ($(div_id))
+                {
+                    $(div_id).hide();
+                    $(div_id).empty();
+                }
+             
+                $('#remote-profiles').append(div_p);
+                displayProfile(profile, div_id);
+                $(div_id).append(svg_html);
                 //console.log(profile);
-                   $('#remote-timeline').hide();
-                   $('#remote-timeline').empty();
-                getOtherProfileFromSQL(profile.username);
-               
+           try {
+                    getOtherProfileFromSQL(profile.username, svg_id);
+                } catch (err)
+                {
+                    console.log(err);
+                }
+                $(div_id).show();
+
 
             });
 }
@@ -593,13 +614,20 @@ function displayPreview(profs, title)
 /**
  * 
  * @param {UserProfile} profile
+ * @param {type} div_id
  * @returns {undefined}
  */
-function displayProfile(profile)
+function displayProfile(profile, div_id)
 {
-    $(IND_PROFILE_DIV_ID).children('.user-profile').remove();
+//    $(div_id).children('.user-profile').remove();
+//    console.log(profile);
+    var div_p = $(div_id);
     var output = profile.formatHTML();
-    $(IND_PROFILE_DIV_ID).prepend(output);
+    console.log(output);
+    console.log(div_p);
+    div_p.append((output));
+    div_p.show();
+
 }
 
 /**
@@ -612,7 +640,7 @@ function formatPreviewProfileHTML(profile)
     var hstr = "<li id='preview-profile-" + profile.id
             + "' class='user-industry-profile'>";
     hstr += "<img src='";
-    console.log(profile.pictureUrl);
+//    console.log(profile.pictureUrl);
     hstr += ((profile.pictureUrl) ? profile.pictureUrl : " ");
     hstr += "' alt='" + profile.name + "' title='" + profile.name + "'/>";
     hstr += "</li>";
@@ -633,17 +661,12 @@ function formatMemberPopup(id)
 //            //console.log(profile);
             break;
         }
-
     }
-
-
     var msg = "<p><strong>" + profile.name + "</strong>"
             + "<br>" + profile.title
             + "<br>" + profile.currentCompany + "<p>";
 //    //console.log(msg);
     $(POPUP_ID).empty();
     $(POPUP_ID).append(msg);
-
-
 
 }

@@ -177,7 +177,7 @@ function drawTimelineBars(t)
                     var months = monthDiff(d.startDate, d.endDate) + 1;
                     if (months < 0)
                         console.log(d);
-                    console.log(t.tScale(months));
+//                    console.log(t.tScale(months));
 //                 console.log(t.prototype);
                     return t.tScale(months);
                 },
@@ -292,6 +292,7 @@ function timelineEvents(t)
                 {
                     var pos = t.allPositions[i];
 //                    console.log(id);
+                    console.log(pos['id']);
                     if (pos['id'] === id) {
                         msg = pos.formatHTML();
                         console.log(msg);

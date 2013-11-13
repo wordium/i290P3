@@ -114,7 +114,7 @@ function getProfiles(users)
                 .result(function(profiles) {
                     profile = profiles.values[0];
                     loadedProfiles[i] = profile;
-                    displayProfiles(profile);
+//                    displayProfiles(profile);
                     var member = new UserProfile(profile);
 //                    console.log(member);
                 })
@@ -154,10 +154,10 @@ function getConnections(users)
  .error(function() {
  console.log("deferred rejected");
  });
+ }
+ function displayProfiles(member) {
+ //    console.log(profiles);
  }*/
-function displayProfiles(member) {
-//    console.log(profiles);
-}
 function displayProfilesErrors(error) {
     //profilesDiv = document.getElementById("profiles");
     //profilesDiv.innerHTML = "<p>Oops!</p>";
@@ -293,19 +293,23 @@ function getCurrentProfileFromSQL(object) {
 }
 
 //making a call to get information from database
-function getOtherProfileFromSQL(username) {
+function getOtherProfileFromSQL(username, svg_id) {
+    console.log("fetching user=" + username);
     $.ajax({
         type: "post",
         url: "phpScript.php",
         data: "action=getprofile" + "&username=" + username
     })
             .done(function(data) {
-                var parsedData = JSON.parse(data);
-                console.log(parsedData);
-                var profile = creatingProfileObject(parsedData);
-                var timeline = new Timeline();
-                timeline.draw(profile, '#remote-timeline');
+                console.log(data);
+                if (data!==null) {
+                    var parsedData = JSON.parse(data);
+                    console.log(parsedData);
+                    var profile = creatingProfileObject(parsedData);
+                    var timeline = new Timeline();
 
+                    timeline.draw(profile, svg_id);
+                }
             })
             .fail(function(data) {
                 console.log("fail");

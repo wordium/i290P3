@@ -53,7 +53,7 @@ section{
 .chart-title {
     fill: #E0F1FF;
 }
-#profiles{
+#profiles, #remote-profiles{
     width:100%;
     display: inline-block;
 }
