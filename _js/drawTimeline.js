@@ -8,13 +8,14 @@ var tScale;
 var tAxisScale;
 var tAxis;
 var tGrid;
-//var xPadding = 10;
-//var yPadding = 10;
+var tXPadding = 30;
+var tYPadding = 20;
+var tYGap = 5;
 var minDate;
 var maxDate;
 var userProfile;
 var tW = 1100;
-var tChartW = 1100;
+var tChartW = 1060;
 var tH = 200;
 var monthW;
 var monthCount = 0;
@@ -24,6 +25,7 @@ var allPositions = [];
 var tickSize = 5;
 var tTicks = 12;
 var overlap = [];
+var tTitleH = 60;
 var currentOverlapIndex = 0;
 
 //var TIMELINE_ID = "my-timeline";
@@ -33,7 +35,7 @@ var currentOverlapIndex = 0;
  * @param {type} target
  * @returns {undefined}
  */
-function drawTimeLine(prof, target)
+function drawTimeline(prof, target)
 {
     userProfile = new UserProfile();
     userProfile = prof;
@@ -50,6 +52,7 @@ function drawTimeLine(prof, target)
 
     drawTimelineAxis();
     drawTimelineBars();
+    drawText();
     timelineEvents();
 
 
@@ -68,7 +71,7 @@ function prepareTimelineData()
         for (var i = 0, j = userProfile.positions.length; i < j; i++)
         {
             var position = userProfile.positions[i];
-            console.log(position);
+//            console.log(position);
             minDate = (monthDiff(position.startDate, minDate) > 0) ? position.startDate : minDate;
             maxDate = (monthDiff(position.endDate, maxDate) < 0) ? position.endDate : maxDate;
             allPositions.push(position);
@@ -87,11 +90,17 @@ function prepareTimelineData()
      
      }
      */
+    minDate = new Date(minDate.getFullYear(), 1);
+    maxDate = new Date(maxDate.getFullYear(), 12);
     sortPositions();
     calculateOverlap();
-    console.log("MIN DATE=" + minDate);
-    console.log("MAX DATE=" + maxDate);
-    monthCount = (maxDate.getYear() - minDate.getYear() + 1) * 12;
+    console.log("MIN DATE=" + minDate + "\t" + minDate.getFullYear());
+    console.log("MAX DATE=" + maxDate + "\t" + maxDate.getFullYear());
+    monthCount = monthDiff(minDate, maxDate);
+    console.log("Month Count=" + monthCount);
+    tTicks = (maxDate.getFullYear() - minDate.getFullYear() + 1);
+
+
 
 }
 function sortPositions()
@@ -134,22 +143,27 @@ function sortPositions()
 function drawTimelineAxis()
 {
     monthW = tW / monthCount;
+    var tChartW = tW - 2 * tXPadding;
 
-    tAxisScale = d3.scale.linear().domain([0, monthCount]).range([0, tW]);
-    tAxis = d3.svg.axis().scale(tAxisScale).orient("bottom").ticks(tTicks);
+    tAxisScale = d3.scale.linear().domain([minDate.getFullYear(), maxDate.getFullYear()]).range([0, tChartW]);
+    tAxis = d3.svg.axis().scale(tAxisScale).orient("bottom").ticks(tTicks).tickFormat(function(d) {
+//       console.log(d);
+//       var date = new Date(d);
+        return parseInt(d);
+    });
     tScale = d3.scale.linear().domain([0, monthCount]).range([0, tChartW]);
     tGrid = d3.svg.axis().scale(tAxisScale).orient("bottom").ticks(tTicks);
     tviz.append("g").classed("labels s_labels", true)
             .attr("class", "axis")
-            .attr("transform", "translate(" + xPadding + ","
-                    + (tH - yPadding) + ")")
+            .attr("transform", "translate(" + tXPadding + ","
+                    + (tH - tTitleH) + ")")
             .call(tAxis.tickSize(5, 0, 0));
 
 
     tviz.append("g").classed("grid y_grid", true)
             .attr("class", "grid")
-            .attr("transform", "translate(" + xPadding + ","
-                    + (tW - yPadding) + ")")
+            .attr("transform", "translate(" + tXPadding + ","
+                    + (tH - tTitleH) + ")")
             .call(tGrid
                     .tickSize(-tH, 0, 0)
                     .tickFormat(""));
@@ -167,28 +181,28 @@ function drawTimelineBars()
                 "width": function(d, i) {
 //                    console.log(d);
 //                    console.log(d + "\t" + xScale(d));
-                    var months = monthDiff(d.startDate, d.endDate);
+                    var months = monthDiff(d.startDate, d.endDate) + 1;
 //                    console.log(months);
                     return tScale(months);
                 },
                 "x": function(d, i) {
                     var months = monthDiff(minDate, d.startDate);
 //                    console.log(months);
-                    return tScale(months);
-//                    return (i) * (colW + 1 * xGap) + 1 * xPadding;
+                    return tScale(months) + tXPadding;
+//                    return (i) * (colW + 1 * xGap) + 1 * tXPadding;
                 },
                 "y": function(d, i) {
-//                    return 2 * yPadding + tBarH * checkOverlap(d);
+//                    return 2 * tYPadding + tBarH * checkOverlap(d);
                     var overlap = (i === 0) ? 0 : checkOverlap(i);
 //                    return  tBarH * i;
 //                    console.log(i + "\t" + d.startDate)
-                    return tBarH * overlap;
-//                    return h - yScale(d) - yPadding;
+                    return tH - (tBarH + tYGap) * overlap - tYPadding - tTitleH;
+//                    return h - yScale(d) - tYPadding;
                 },
                 "desc": function(d, i) {
                     var pos = new Position();
                     pos = d;
-                    var str = pos.company;
+                    var str = pos.title;
                     ;
                     return str;
                 },
@@ -222,11 +236,29 @@ function timelineEvents() {
                 var self = $(this);
                 self.animate({"opacity": .8}, 100);
                 self.attr('class', self.attr('class') + ' selected-column');
+                var id = parseInt((self.attr('id')).replace("position-bar-", ""));
+                var msg = "";
+                for (var i = 0, j = allPositions.length; i < j; i++)
+                {
+                    var pos = allPositions[i];
+//                    console.log(id);
+                    if (pos['id'] === id) {
+                        msg = pos.formatHTML();
+                        console.log(msg);
+                        break;
+                    }
+                }
+                $('#position-popup').empty()
+                        .append(msg)
+                        .css({"left": parseInt(self.position().left - 60),
+                            "top": self.position().top - 100})
+                        .show();
             })
             .on("mouseleave", function() {
                 var self = $(this);
                 self.animate({"opacity": 1}, 100);
                 self.attr('class', self.attr('class').replace('selected-column', ""));
+                $('#position-popup').hide();
             })
             .on("click", function() {
                 var self = $(this);
@@ -244,6 +276,37 @@ function timelineEvents() {
             });
 }
 
+function drawText()
+{
+    tviz.selectAll("text.name")
+            .data(allPositions)
+            .enter()
+            .append("text")
+            .text(function(d, i) {
+                var position = new Position();
+                position = allPositions[i];
+                return position.title;
+            })
+            .attr({
+                "x": function(d, i) {
+                    var months = monthDiff(minDate, d.startDate);
+//                    console.log(months);
+                    return tScale(months) + tXPadding + tScale(monthDiff(d.startDate, d.endDate)) / 2;
+                },
+                "y": function(d, i) {
+                    var overlap = (i === 0) ? 0 : checkOverlap(i);
+                    return tH - (tBarH + tYGap) * overlap - tTitleH + 5;
+                },
+                "width": function(d, i) {
+                    console.log(d);
+                    var months = monthDiff(d.startDate, d.endDate) + 1;
+                    console.log(months);
+                    return tScale(months);
+                },
+                "text-anchor": "middle",
+                "class": "titles"
+            });
+}
 
 function monthDiff(d1, d2) {
     var months;
@@ -258,7 +321,7 @@ function monthDiff(d1, d2) {
 }
 /**
  * 
- * @param {boolean} back
+ * @param {Number} index
  * @returns {undefined}
  */
 function checkOverlap(index)
@@ -276,13 +339,13 @@ function checkOverlap(index)
     for (var i = 0; i < index; i++)
         bol2 += backOverlap[i];
 
-    console.log(bol1 + "\t" + bol2 + "\t" + fol1 + "\t" + fol2);
+//    console.log(bol1 + "\t" + bol2 + "\t" + fol1 + "\t" + fol2);
     if (bol1 === 0)
         return 0;
     else
         return Math.abs(bol1 - bol2);
 
-    console.log(fol + "\t" + bol);
+//    console.log(fol + "\t" + bol);
 }
 var backOverlap = [];
 var forwardOverlap = [];
@@ -291,8 +354,8 @@ function calculateOverlap()
     for (var i = 0, j = allPositions.length; i < j; i++)
     {
         overlap[i] = [];
-        backOverlap[i] = 0
-        forwardOverlap[i] = 0
+        backOverlap[i] = 0;
+        forwardOverlap[i] = 0;
 
 //        console.log(i);
         for (var k = 0, l = allPositions.length; k < l; k++)
@@ -318,7 +381,7 @@ function calculateOverlap()
                     overlapCount++;
                 }
 
-                console.log(s1s2 + "\t" + s1e2 + "\t" + e1s2 + "\t" + e1e2 + "\t" + overlapCount);
+//                console.log(s1s2 + "\t" + s1e2 + "\t" + e1s2 + "\t" + e1e2 + "\t" + overlapCount);
 
                 overlap[i][k] = overlapCount;
             }
@@ -327,10 +390,10 @@ function calculateOverlap()
             else
                 forwardOverlap[i] += overlapCount;
         }
-        console.log(overlap[i]);
+//        console.log(overlap[i]);
     }
-    console.log("Overlap:");
-    console.log(overlap);
-    console.log(backOverlap);
-    console.log(forwardOverlap);
+    /*   console.log("Overlap:");
+     console.log(overlap);
+     console.log(backOverlap);
+     console.log(forwardOverlap);*/
 }

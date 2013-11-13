@@ -104,6 +104,21 @@ section{
     z-index:100;
     background-color: #fff;
 }
+#position-popup
+{
+        display:none;
+    font-size: .75em;
+    /* font-weight:bold; */
+    max-width: 200px;
+    padding: 5px;
+    /* height:20px; */
+    position:absolute;
+    text-align:center;
+    top:0;
+    /* width:70px; */
+    z-index:100;
+    background-color: #fff;
+}
 #industry-viz .titles{
     color: #23659c;
     fill: #23659c;

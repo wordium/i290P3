@@ -61,29 +61,37 @@ function getCurrentUserHistory()
                 username = myUrl.match("(.com/[a-z]*/)(.*)");
                 username = username[2];
                 getCurrentProfileFromSQL(username); //goto getProfileFromSQL function to use the object
-                
-            });    
+
+            });
 }
 
 function getOtherUserHistory(otherUser)
 {
     getCurrentProfileFromSQL(otherUser); //goto getProfileFromSQL function to use the object
     //var myUrl = profile.publicProfileUrl;
-    
+
     //username = myUrl.match("(.com/[a-z]*/)(.*)");
     //username = username[2];
-                
+
 }
 
+function getUserProfileFromDB(profile)
+{
+    var myUrl = profile.publicProfileUrl;
+    //getting the linkedin username from the public profile url
+    username = myUrl.match("(.com/[a-z]*/)(.*)");
+    username = username[2];
+    getCurrentProfileFromSQL(username); //goto getProfileFromSQL function to use the object
+}
 function drawCurrentUserProfile()
 {
     IN.API.Profile("me")
             .fields(PROFILE_FIELDS)
             .result(function(profiles) {
-               
+
                 var profile = new UserProfile(profiles.values[0]);
                 $('#my-profile').empty().append(profile.formatHTML());
-                drawTimeLine(profile, '#my-timeline');
+                drawTimeline(profile, '#my-timeline');
             });
 }
 function getProfiles(users)
@@ -149,9 +157,9 @@ function displayProfiles(member) {
 //    console.log(profiles);
 }
 function displayProfilesErrors(error) {
- //profilesDiv = document.getElementById("profiles");
-  //profilesDiv.innerHTML = "<p>Oops!</p>";
-  console.log(error);
+    //profilesDiv = document.getElementById("profiles");
+    //profilesDiv.innerHTML = "<p>Oops!</p>";
+    console.log(error);
 }
 
 function findPeopleByIndustry(industry)
@@ -266,37 +274,38 @@ function displayPeopleSearch(peopleSearch) {
 }
 
 //making a call to get information from database
-function getCurrentProfileFromSQL (object) {
+function getCurrentProfileFromSQL(object) {
     $.ajax({
-        type:"post",
-        url:"phpScript.php",
-        data:"action=getprofile"+"&username="+object
+        type: "post",
+        url: "phpScript.php",
+        data: "action=getprofile" + "&username=" + object
     })
-        .done(function(data){
-            var parsedData = JSON.parse(data);
-            var userHistory = creatingProfileObject(parsedData);
-            console.log(userHistory);
-        })
-        .fail(function(data){
-            console.log("fail");
-        });
+            .done(function(data) {
+                var parsedData = JSON.parse(data);
+                var userHistory = creatingProfileObject(parsedData);
+                console.log(userHistory);
+            })
+            .fail(function(data) {
+                console.log("fail");
+            });
 }
 
 //making a call to get information from database
-function getOtherProfileFromSQL (object) {
+function getOtherProfileFromSQL(username) {
     $.ajax({
-        type:"post",
-        url:"phpScript.php",
-        data:"action=getprofile"+"&username="+object
+        type: "post",
+        url: "phpScript.php",
+        data: "action=getprofile" + "&username=" + username
     })
-        .done(function(data){
-            var parsedData = JSON.parse(data);
-            var otherUserHistory = creatingProfileObject(parsedData);
-            console.log(otherUserHistory);
-        })
-        .fail(function(data){
-            console.log("fail");
-        });
+            .done(function(data) {
+                var parsedData = JSON.parse(data);
+                console.log(parsedData);
+                var profile = creatingProfileObject(parsedData);
+                drawTimeline(profile, '#remote-timeline');
+            })
+            .fail(function(data) {
+                console.log("fail");
+            });
 }
 
 //creating the profile object
@@ -304,40 +313,72 @@ function creatingProfileObject(data) {
     //var workHistory = [];
     //var profile = [];
     //workHistory1.push({hello: "Mooo"});
-    for (var i = 0; i < data.length; i++) {
-        //console.log(data[i].positionCompanyName);
-        //pushing data to the positions object
-        workHistory.push({
-            isPositionOrEducation : data[i].isPositionOrEducation,
-            title : data[i].positionTitle,
-            subTitle : data[i].positionSubTitle,
-            company : {
-                    name : data[i].positionCompanyName,
-                    location : data[i].positionCompanyLocation,
-                    industry : data[i].positionCompanyIndustry,
-                },
-            startDate : {
-                    year : data[i].positionStartDateYear,
-                    month : data[i].positionStartDateMonth,
-                },
-            endDate : {
-                    isCurrent : data[i].positionEndDateIsCurrent,
-                    year : data[i].positionEndDateYear,
-                    month : data[i].positionEndDateMonth,
-                },
-            summary : data[i].positionSummary,
-        });
+    var profile = new UserProfile();
+    if (data)
+    {
+        var profile = new UserProfile();
+        profile.id = data[0].profileID;
+        profile.name = data[0].name;
+        profile.username = data[0].username;
+        profile.pictureUrl = data[0].picURL;
+
+
+
+        for (var i = 0; i < data.length; i++)
+        {
+            //console.log(data[i].positionCompanyName);
+            //pushing data to the positions object
+
+            var position = new Position();
+            position.id = Math.random()*1000000;
+            position.title = data[i.positionTitle];
+            position.company = data[i].positionCompanyLocation;
+            position.industry = data[i].positionCompanyIndustry;
+            position.startYear = parseInt(data[i].positionStartDateYear);
+            position.startMonth = parseInt(data[i].positionStartDateMonth);
+            position.startDate = new Date(position.startYear, position.startMonth);
+            position.isCurrent =  data[i].positionEndDateIsCurrent===1;
+            if (position.isCurrent)
+            {
+                position.endDate = new Date();
+                position.endYear = (new Date()).getFullYear();
+                position.endMonth = (new Date()).getMonth;
+            }
+            else {
+
+                position.endYear = parseInt(data[i].positionEndDateYear);
+                position.endMonth = parseInt(data[i].positionEndDateMonth);
+                position.endDate = new Date(position.endYear, position.endMonth);
+            }
+            position.summary = data[i].positionSummary;
+            profile.positions.push(position);
+            /*
+             workHistory.push({
+             isPositionOrEducation: data[i].isPositionOrEducation,
+             title: data[i].positionTitle,
+             subTitle: data[i].positionSubTitle,
+             company: {
+             name: data[i].positionCompanyName,
+             location: data[i].positionCompanyLocation,
+             industry: data[i].positionCompanyIndustry,
+             },
+             startDate: {
+             year: data[i].positionStartDateYear,
+             month: data[i].positionStartDateMonth,
+             },
+             endDate: {
+             isCurrent: data[i].positionEndDateIsCurrent,
+             year: data[i].positionEndDateYear,
+             month: data[i].positionEndDateMonth,
+             },
+             summary: data[i].positionSummary,
+             });*/
+        }
     }
-    userDataTimeline.push({
-        id: data[0].profileID, 
-        name: data[0].name,
-        username: data[0].username,
-        picURL: data[0].picURL,
-        history: workHistory
-    });
     //console.log(userDataTimeline);
-    return userDataTimeline;
-    
+    console.log(profile);
+    return profile;
+
 }
 
 

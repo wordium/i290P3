@@ -557,15 +557,20 @@ function profilePreviewEvents()
                 var id = self.attr('id');
                 id = id.replace('preview-profile-', '');
 //                console.log(id);
-                var profile;
+                var profile = new UserProfile();
 
                 for (var i = 0, j = profiles.length; i < j; i++)
                 {
                     profile = (profiles[i].id === id) ? profiles[i] : profile;
                 }
-                console.log(profile);
+//                console.log(profile);
 
                 displayProfile(profile);
+                
+                console.log(profile);
+                
+                getOtherProfileFromSQL(profile.username);
+                
             });
 }
 
