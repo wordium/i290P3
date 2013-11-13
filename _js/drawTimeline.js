@@ -208,6 +208,7 @@ function drawTimelineBars(t)
                 "id": function(d, i) {
                     return "position-bar-" + d['id'];
                 }
+                /*
                 ,
                 "fill": function(d, i) {
                     var dVal = 0;
@@ -217,7 +218,7 @@ function drawTimelineBars(t)
                     dVal = Math.ceil(256 * (i + 1) / (t.allPositions.length + 1));
 //                    console.log(dVal);
                     return "rgb(" + 190 + "," + 220 + "," + dVal + ")";
-                }
+                }*/
             });
 }
 
