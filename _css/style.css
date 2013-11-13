@@ -70,7 +70,7 @@ h2 {
     margin-top: 14px;
 }
 
-.section-header {
+.section-header, #footer {
     padding: 10px;
 }
 
@@ -79,6 +79,10 @@ h2 {
     height: 30px;
     vertical-align: top;
     border: 0;
+}
+
+#footer {
+  margin: 20px 0;
 }
 
 /****** SVG styling ********/
